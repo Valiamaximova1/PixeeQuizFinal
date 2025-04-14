@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@android:drawable/sym_def_app_icon"
+        android:roundIcon="@android:drawable/sym_def_app_icon"
+        android:supportsRtl="true"
+
+        android:theme="@style/Theme.ChipiQuizFinal">
+
+        <activity
+            android:name=".activity.SplashActivity"
+            android:theme="@style/Theme.NoLauncherIcon"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.AdminPanelActivity" />
+        <activity android:name=".activity.UserListActivity" />
+        <activity android:name=".activity.AddMultipleChoiceQuestionActivity" />
+        <activity android:name=".activity.SelectQuestionTypeActivity" />
+        <activity android:name=".activity.ExerciseActivity" />
+        <activity android:name=".activity.LessonActivity" />
+        <activity android:name=".activity.WelcomeActivity" />
+        <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.RegistrationActivity" />
+        <activity android:name=".activity.ArModelViewerActivity" />
+
+    </application>
+
+</manifest>

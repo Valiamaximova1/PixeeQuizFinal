@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="primary">#4A90E2</color>          <!-- Ярко синьо: основен цвят -->
+    <color name="purple">#8e44ad</color>          <!-- Ярко синьо: основен цвят -->
+    <color name="primary_dark">#357ABD</color>     <!-- Тъмно синьо за заглавия и акценти -->
+    <color name="accent">#50E3C2</color>           <!-- Ментово зелено: за бутони и активни елементи -->
+    <color name="background">#F5F8FA</color>       <!-- Светъл фон -->
+    <color name="text_primary">#1C1C1C</color>     <!-- Основен текст (почти черен) -->
+    <color name="text_secondary">#7B8A8B</color>   <!-- Вторичен текст (сив) -->
+    <color name="error">#FF5252</color>            <!-- За грешки/валидация -->
+    <color name="purple_dark">#784e92</color>            <!-- За грешки/валидация -->
+    <color name="green">#30A430</color>
+    <color name="red">#FF5252</color>
+
+</resources>

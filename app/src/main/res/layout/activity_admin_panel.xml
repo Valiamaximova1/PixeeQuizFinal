@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="@color/white"
+    android:gravity="center_horizontal">
+
+    <ImageView
+        android:layout_width="188dp"
+        android:layout_height="200dp"
+        android:layout_marginBottom="12dp"
+        android:src="@drawable/pixee" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="39dp"
+        android:layout_marginBottom="24dp"
+        android:fontFamily="@font/underdog"
+        android:text="Welcome, Admin!"
+        android:textColor="@color/purple_dark"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/addQuestionBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add New Question"
+        android:textSize="18sp"
+        android:background="@drawable/rounded_button_primary"
+        android:textColor="@color/white"
+        android:padding="10dp"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/viewUsersBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View All Users"
+        android:textSize="18sp"
+        android:background="@drawable/rounded_button_secondary"
+        android:textColor="@color/white"
+        android:padding="10dp"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/viewQuestionsBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View All Questions"
+        android:textSize="18sp"
+        android:background="@drawable/rounded_button_secondary"
+        android:textColor="@color/white"
+        android:padding="10dp" />
+
+</LinearLayout>

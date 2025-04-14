@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:text="Add Multiple Choice Question"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/purple_dark"
+            android:layout_marginBottom="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- Language Selection -->
+        <Spinner
+            android:id="@+id/languageSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Level and Exercise -->
+        <EditText
+            android:id="@+id/levelInput"
+            android:hint="Level (1-5)"
+            android:inputType="number"
+            style="@style/ModernInput" />
+
+        <EditText
+            android:id="@+id/exerciseInput"
+            android:hint="Exercise number (1-10)"
+            android:inputType="number"
+            style="@style/ModernInput" />
+
+        <!-- Question Texts -->
+        <EditText
+            android:id="@+id/questionInputEn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Question (English)"
+            android:layout_marginBottom="12dp"
+            android:inputType="textMultiLine"/>
+
+
+        <EditText
+            android:id="@+id/questionInputBg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Question (Bulgarian)"
+            android:layout_marginBottom="24dp"
+            android:inputType="textMultiLine"/>
+
+        <!-- Answer 1 -->
+        <EditText
+            android:id="@+id/answer1En"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Answer 1 (English)"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/answer1Bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Answer 1 (Bulgarian)"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Answer 2 -->
+        <EditText
+            android:id="@+id/answer2En"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Answer 2 (English)"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/answer2Bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Answer 2 (Bulgarian)"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Answer 3 -->
+        <EditText
+            android:id="@+id/answer3En"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Answer 3 (English)"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/answer3Bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Answer 3 (Bulgarian)"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Answer 4 -->
+        <EditText
+            android:id="@+id/answer4En"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Answer 4 (English)"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/answer4Bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Answer 4 (Bulgarian)"
+            android:layout_marginBottom="24dp"/>
+
+
+        <!-- Correct Answer Selection -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Which answer is correct?"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="16dp" />
+
+        <RadioGroup
+            android:id="@+id/correctAnswerRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <RadioButton
+                android:id="@+id/correct1"
+                android:text="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RadioButton
+                android:id="@+id/correct2"
+                android:text="2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RadioButton
+                android:id="@+id/correct3"
+                android:text="3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RadioButton
+                android:id="@+id/correct4"
+                android:text="4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RadioGroup>
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/saveQuestionBtn"
+            android:text="Save Question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:background="@drawable/rounded_button_primary"
+            android:textColor="@android:color/white"
+            android:padding="12dp"
+            android:textSize="18sp"
+            android:layout_marginTop="24dp" />
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,103 @@
+
+<resources>
+    <string name="app_name">Pixee</string>
+
+    <!-- Welcome -->
+    <string name="get_started">Регистрирай се</string>
+    <string name="already_have_account">Имам профил</string>
+    <string name="tagline">Забавният начин да се подготвиш за IT интервюта!</string>
+
+    <!-- Login -->
+    <string name="login_title">Вход</string>
+    <string name="email">Имейл</string>
+    <string name="password">Парола</string>
+    <string name="login">Влез</string>
+
+    <!-- Registration -->
+    <string name="registration_title">Създай профил</string>
+    <string name="first_name">Име</string>
+    <string name="last_name">Фамилия</string>
+    <string name="username">Потребителско име</string>
+    <string name="daily_minutes">Минути на ден</string>
+    <string name="select_language">Език за интервюта</string>
+    <string name="create_profile">Създай профил</string>
+    <string name="profile_created_successfully">Профилът е създаден успешно!</string>
+
+    <!-- Errors -->
+    <string name="fill_all_fields">Моля, попълни всички полета.</string>
+    <string name="email_exists">Потребител с този имейл вече съществува.</string>
+    <string name="invalid_credentials">Невалидни данни за вход.</string>
+
+    <!-- MainActivity -->
+    <string name="points">Точки</string>
+    <string name="streak">Дни подред</string>
+    <string name="lives">Животи</string>
+    <string name="menu_home">Начало</string>
+    <string name="menu_challenges">Предизвикателства</string>
+    <string name="menu_rewards">Награди</string>
+    <string name="menu_profile">Профил</string>
+
+    <!-- Quiz -->
+    <string name="correct_answer">✅ Вярно!</string>
+    <string name="wrong_answer">❌ Грешно!</string>
+    <string name="try_again">Опитай отново.</string>
+    <string name="next_question">Продължи</string>
+    <string name="exercise_complete">Упражнението е завършено! +10 точки</string>
+    <string name="no_questions">Няма въпроси за това упражнение.</string>
+
+<!--    &lt;!&ndash; Language Dialog &ndash;&gt;-->
+<!--    <string name="select_language_dialog">Избери език</string>-->
+<!--    <string name="bulgarian">Български</string>-->
+<!--    <string name="english">Английски</string>-->
+
+    <string-array name="language_codes">
+        <item>Български</item>
+        <item>Английски</item>
+    </string-array>
+
+
+
+    <string-array name="programming_languages_display">
+        <item>Java</item>
+        <item>C</item>
+        <item>C++</item>
+        <item>C#</item>
+        <item>JavaScript</item>
+        <item>HTML и CSS</item>
+        <item>Хардуер</item>
+        <item>Python</item>
+    </string-array>
+
+
+</resources>
+
+
+<!--<resources>-->
+<!--    <string name="app_name">Pixee</string>-->
+<!--    -->
+<!--    <string name="title_activity_splash">Начало</string>-->
+<!--    <string name="prompt_email">Имейл</string>-->
+<!--    <string name="prompt_password">Парола</string>-->
+<!--    <string name="action_sign_in">Sign in or register</string>-->
+<!--    <string name="action_sign_in_short">Sign in</string>-->
+<!--    <string name="welcome">"Здравей !"</string>-->
+<!--    <string name="invalid_username">Не е валидно потребителско име</string>-->
+<!--    <string name="invalid_password">Паролата трябва да бъде повече от 5 символа</string>-->
+<!--    <string name="login_failed">"Неуспешен опит за вход!"</string>-->
+
+<!--    <string-array name="languages">-->
+<!--        <item>Джава</item>-->
+<!--        <item>C</item>-->
+<!--        <item>C++</item>-->
+<!--        <item>C#</item>-->
+<!--        <item>Джава Скрипт</item>-->
+<!--        <item>HTML &amp; CSS</item>-->
+<!--        <item>Хардуер</item>-->
+<!--    </string-array>-->
+
+<!--    <string-array name="language_codes">-->
+<!--        <item>English</item>-->
+<!--        <item>Български</item>-->
+<!--    </string-array>-->
+
+<!--</resources>-->

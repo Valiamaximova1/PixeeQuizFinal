@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp">
+
+    <!-- Твоето лого -->
+    <ImageView
+        android:id="@+id/logoImage"
+        android:layout_width="287dp"
+        android:layout_height="285dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="Pixee logo"
+        android:src="@drawable/pixee" />
+
+    <!-- Надпис Pixee със специален шрифт -->
+
+    <!-- Подзаглавие -->
+
+    <TextView
+        android:id="@+id/appName"
+        android:layout_width="244dp"
+        android:layout_height="82dp"
+        android:layout_marginBottom="12dp"
+        android:fontFamily="@font/underdog"
+        android:gravity="center"
+        android:text="PIXEE"
+        android:textColor="@color/purple_dark"
+        android:textSize="70dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tagline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="36dp"
+        android:gravity="center"
+        android:text="@string/tagline"
+        android:textColor="#666666"
+        android:textSize="14sp" />
+
+
+    <Button
+        android:id="@+id/registerButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_button_primary"
+        android:elevation="4dp"
+        android:padding="10dp"
+        android:text="@string/get_started"
+        android:textAllCaps="false"
+        android:layout_marginBottom="20sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textSize="20sp" />
+
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/already_have_account"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:background="@drawable/rounded_button_shadow"
+        android:padding="12dp"
+        android:textSize="20sp"
+        android:layout_marginBottom="16dp" />
+
+
+</LinearLayout>

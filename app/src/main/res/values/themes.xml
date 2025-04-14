@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+<!--    <style name="Theme.ChipiQuizFinal" parent="Theme.MaterialComponents.DayNight.NoActionBar">-->
+<!--        &lt;!&ndash; Изключваме Material стилизация &ndash;&gt;-->
+<!--        <item name="buttonStyle">@style/Widget.AppCompat.Button</item>-->
+<!--        <item name="android:buttonStyle">@style/Widget.AppCompat.Button</item>-->
+<!--    </style>-->
+
+
+<!--    <style name="Theme.ChipiQuizFinal" parent="Base.Theme.ChipiQuizFinal" />-->
+
+<!--    <style name="Theme.ChipiQuizFinal" parent="Theme.AppCompat.Light.NoActionBar">-->
+<!--        <item name="colorPrimary">@color/purple_dark</item>-->
+<!--        <item name="colorPrimaryDark">@color/purple_dark</item>-->
+<!--        <item name="colorAccent">@color/purple_dark</item>-->
+<!--    </style>-->
+
+
+    <style name="Theme.ChipiQuizFinal" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <item name="colorPrimary">@color/purple_dark</item>
+        <item name="colorPrimaryDark">@color/purple_dark</item>
+        <item name="colorAccent">@color/purple_dark</item>
+    </style>
+
+<!--        <style name="Base.Theme.ChipiQuizFinal" parent="Theme.Material3.DayNight.NoActionBar">-->
+<!--        </style>-->
+<!--        <style name="Theme.NoLauncherIcon" parent="Theme.MaterialComponents.DayNight.NoActionBar">-->
+<!--            <item name="android:windowBackground">@android:color/transparent</item> &lt;!&ndash; или картинка &ndash;&gt;-->
+<!--            <item name="android:windowNoTitle">true</item>-->
+<!--            <item name="android:windowFullscreen">true</item>-->
+<!--            <item name="android:windowContentOverlay">@null</item>-->
+<!--        </style>-->
+</resources>
+
+
+
+
+
+<!--    <style name="ModernInput">-->
+<!--        <item name="android:layout_width">match_parent</item>-->
+<!--        <item name="android:layout_height">wrap_content</item>-->
+<!--        <item name="android:layout_marginTop">12dp</item>-->
+<!--        <item name="android:background">@drawable/rounded_input</item>-->
+<!--        <item name="android:padding">14dp</item>-->
+<!--        <item name="android:textColor">@color/text_primary</item>-->
+<!--        <item name="android:textColorHint">@color/text_secondary</item>-->
+<!--    </style>-->
+
+
+
+
+<!--</resources>-->
