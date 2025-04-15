@@ -19,8 +19,6 @@ material = "1.12.0"
 activity = "1.10.1"
 constraintlayout = "2.2.1"
 materialVersion = "1.4.0"
-rajawali = "1.1.970"
-rajawaliVersion = "1.0.325"
 roomCompiler = "2.3.0"
 roomRuntime = "2.6.1"
 annotation = "1.9.1"
@@ -50,9 +48,6 @@ material = { group = "com.google.android.material", name = "material", version.r
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 material-v140 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
-rajawali = { module = "org.rajawali3d:rajawali", version.ref = "rajawali" }
-rajawali-v10325 = { module = "org.rajawali3d:rajawali", version.ref = "rajawaliVersion" }
-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 room-compiler-v230 = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }

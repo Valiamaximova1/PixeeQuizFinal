@@ -1,62 +1,65 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+plugins {
+    id 'com.android.application'
+}
 
 android {
-    compileSdkVersion rootProject.compileSdk
+    namespace 'com.example.chipiquizfinal'
+    compileSdk 33
 
     defaultConfig {
-        applicationId "org.rajawali3d.examples"
-        minSdkVersion 16
-        targetSdkVersion rootProject.targetSdk
-        versionCode getGitCommitCount()
-        versionName getTag()
+        applicationId "com.example.chipiquizfinal"
+        minSdk 26
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArguments useTestStorageService: 'true'
+        multiDexEnabled true
     }
 
     buildTypes {
-        debug {
-            defaultConfig.minSdkVersion 21
-        }
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-        }
-    }
-    packagingOptions {
-        jniLibs {
-            pickFirsts += ['lib/armeabi-v7a/libvraudio_engine.so', 'lib/armeabi-v7a/libvrtoolkit.so']
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
-    lint {
-        abortOnError false
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
-    namespace 'org.rajawali3d.examples'
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
-    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation "androidx.core:core-ktx:1.9.0"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    // LibGDX core
+    implementation "com.badlogicgames.gdx:gdx:1.12.0"
+    implementation "com.badlogicgames.gdx:gdx-backend-android:1.12.0"
+    implementation "com.badlogicgames.gdx:gdx-box2d:1.12.0"
+
+    // LibGDX natives (задължително)
+    implementation "com.badlogicgames.gdx:gdx-platform:1.12.0:natives-armeabi-v7a"
+    implementation "com.badlogicgames.gdx:gdx-platform:1.12.0:natives-arm64-v8a"
+    implementation "com.badlogicgames.gdx:gdx-platform:1.12.0:natives-x86"
+    implementation "com.badlogicgames.gdx:gdx-platform:1.12.0:natives-x86_64"
+
+    // Room & база
+    implementation "androidx.room:room-runtime:2.6.1"
+    annotationProcessor "androidx.room:room-compiler:2.6.1"
+
+    // AndroidX и UI
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.android.material:material:1.9.0'
 
-    implementation 'androidx.preference:preference-ktx:1.2.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    // LifeCycle
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.2"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
 
-    implementation project(':rajawali')
-
-    wearApp project(':wear-example')
-
-    androidTestImplementation "androidx.test.ext:junit-ktx:1.1.5"
-    androidTestUtil "androidx.test.services:test-services:1.4.2"
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
-    androidTestImplementation "androidx.test:rules:1.5.0" // GrantPermissionRule
-    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.5.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.5.1'
+    // Тестове
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }

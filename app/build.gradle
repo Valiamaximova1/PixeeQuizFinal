@@ -43,13 +43,10 @@ dependencies {
     implementation libs.cardview
     implementation libs.activity.v140
     implementation libs.room.runtime.v230
-    implementation files('libs/audio.jar')
-    implementation files('libs/cardboard.jar')
 
     annotationProcessor libs.room.compiler.v230
 
-    implementation libs.rajawali
-    implementation libs.rajawali.v10325
+
 
     testImplementation libs.junit
     androidTestImplementation libs.junit.v113
