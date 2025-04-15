@@ -22,7 +22,7 @@ public class SelectQuestionTypeActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.hardwareQuestionBtn).setOnClickListener(v -> {
-//            startActivity(new Intent(this, AddHardwareQuestionActivity.class));
+            startActivity(new Intent(this, Add3DQuestionActivity.class));
         });
     }
 }

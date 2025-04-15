@@ -8,8 +8,7 @@ pluginManagement {
             }
         }
         mavenCentral()
-        maven { url 'https://jitpack.io' }
-        gradlePluginPortal()
+        jcenter()
     }
 }
 dependencyResolutionManagement {
@@ -17,13 +16,14 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-//        maven { url 'https://jitpack.io' }
-        flatDir {
-            dirs 'libs'
-        }
-
+        jcenter()
     }
 }
 
 rootProject.name = "ChipiQuizFinal"
 include ':app'
+include ':wear'
+include ':wear-example'
+include ':rajawali'
+include ':vr'
+include ':examples'

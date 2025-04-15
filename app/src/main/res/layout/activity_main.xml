@@ -74,7 +74,7 @@
     </ScrollView>
 
     <Button
-        android:id="@+id/openArButton"
+        android:id="@+id/openArViewerBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Виж модел в AR"

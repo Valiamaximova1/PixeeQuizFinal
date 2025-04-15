@@ -1,38 +1,64 @@
 [versions]
+activityVersion = "1.4.0"
 agp = "8.8.2"
+androidxJunit = "1.1.3"
+annotationVersion = "1.2.0"
+appcompatVersion = "1.4.0"
 cardview = "1.0.0"
+constraintlayoutVersion = "2.1.1"
 core = "1.17.1"
+espressoCoreVersion = "3.4.0"
 githubSceneview = "1.1.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
+lifecycleLivedataKtxVersion = "2.4.0"
+lifecycleViewmodelKtxVersion = "2.4.0"
 material = "1.12.0"
 activity = "1.10.1"
 constraintlayout = "2.2.1"
+materialVersion = "1.4.0"
+rajawali = "1.1.970"
+rajawaliVersion = "1.0.325"
+roomCompiler = "2.3.0"
 roomRuntime = "2.6.1"
 annotation = "1.9.1"
 lifecycleLivedataKtx = "2.8.7"
 lifecycleViewmodelKtx = "2.8.7"
+roomRuntimeVersion = "2.3.0"
 sceneview = "1.18.1"
 sceneviewVersion = "1.1.0"
 
 [libraries]
+activity-v140 = { module = "androidx.activity:activity", version.ref = "activityVersion" }
+annotation-v120 = { module = "androidx.annotation:annotation", version.ref = "annotationVersion" }
+appcompat-v140 = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
 cardview = { module = "androidx.cardview:cardview", version.ref = "cardview" }
+constraintlayout-v211 = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayoutVersion" }
 core = { module = "com.google.ar.sceneform:core", version.ref = "core" }
+espresso-core-v340 = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCoreVersion" }
 github-sceneview = { module = "io.github.SceneView:sceneview", version.ref = "sceneviewVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+junit-v113 = { module = "androidx.test.ext:junit", version.ref = "androidxJunit" }
+lifecycle-livedata-ktx-v240 = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtxVersion" }
+lifecycle-viewmodel-ktx-v240 = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtxVersion" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+material-v140 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
+rajawali = { module = "org.rajawali3d:rajawali", version.ref = "rajawali" }
+rajawali-v10325 = { module = "org.rajawali3d:rajawali", version.ref = "rajawaliVersion" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
+room-compiler-v230 = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
 lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+room-runtime-v230 = { module = "androidx.room:room-runtime", version.ref = "roomRuntimeVersion" }
 sceneform-ux = { module = "com.google.ar.sceneform.ux:sceneform-ux", version.ref = "core" }
 sceneview = { group = "io.github.sceneview", name = "sceneview", version = "1.18.1" }
 

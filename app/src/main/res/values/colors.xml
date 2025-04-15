@@ -11,6 +11,7 @@
     <color name="text_secondary">#7B8A8B</color>   <!-- Вторичен текст (сив) -->
     <color name="error">#FF5252</color>            <!-- За грешки/валидация -->
     <color name="purple_dark">#784e92</color>            <!-- За грешки/валидация -->
+    <color name="purple_500">#784e92</color>            <!-- За грешки/валидация -->
     <color name="green">#30A430</color>
     <color name="red">#FF5252</color>
 

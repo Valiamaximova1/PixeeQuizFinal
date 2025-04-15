@@ -18,26 +18,126 @@
             android:textColor="@color/purple_dark"
             android:layout_marginBottom="20dp"/>
 
+        <!-- Level and Exercise -->
         <EditText
-            android:id="@+id/questionText"
-            android:hint="Въпрос"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
+            android:id="@+id/levelInput"
+            android:hint="Level (1-5)"
+            android:inputType="number"
+            style="@style/ModernInput" />
 
         <EditText
-            android:id="@+id/modelPathInput"
-            android:hint="Path към 3D модела (assets/models/ram.g3db)"
+            android:id="@+id/exerciseInput"
+            android:hint="Exercise number (1-10)"
+            android:inputType="number"
+            style="@style/ModernInput" />
+
+        <EditText android:id="@+id/modelPathInput"   android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:hint="Model path (e.g. models/ram.g3db)" />
+        <EditText android:id="@+id/questionTextEn"  android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:hint="Question (English)" />
+        <EditText android:id="@+id/questionTextBg"   android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:hint="Въпрос (Български)" />
+
+        <!-- Answer 1 -->
+        <EditText
+            android:id="@+id/answer1En"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
+            android:hint="Answer 1 (English)"
+            android:layout_marginBottom="8dp"/>
 
         <EditText
-            android:id="@+id/answerInput"
-            android:hint="Верният отговор"
+            android:id="@+id/answer1Bg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
+            android:hint="Answer 1 (Bulgarian)"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Answer 2 -->
+        <EditText
+            android:id="@+id/answer2En"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Answer 2 (English)"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/answer2Bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Answer 2 (Bulgarian)"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Answer 3 -->
+        <EditText
+            android:id="@+id/answer3En"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Answer 3 (English)"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/answer3Bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Answer 3 (Bulgarian)"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Answer 4 -->
+        <EditText
+            android:id="@+id/answer4En"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Answer 4 (English)"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/answer4Bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Answer 4 (Bulgarian)"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Верен отговор -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Which answer is correct?"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="16dp" />
+
+        <RadioGroup
+            android:id="@+id/correctAnswerRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <RadioButton
+                android:id="@+id/correct1"
+                android:text="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RadioButton
+                android:id="@+id/correct2"
+                android:text="2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RadioButton
+                android:id="@+id/correct3"
+                android:text="3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RadioButton
+                android:id="@+id/correct4"
+                android:text="4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RadioGroup>
 
         <Button
             android:id="@+id/save3DQuestionBtn"

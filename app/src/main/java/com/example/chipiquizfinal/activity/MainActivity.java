@@ -75,10 +75,13 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "User not found!", Toast.LENGTH_SHORT).show();
         }
 
-        Button openArButton = findViewById(R.id.openArButton);
-        openArButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ArModelViewerActivity.class);
-            startActivity(intent);
+
+        Button openArViewerBtn = findViewById(R.id.openArViewerBtn);
+        openArViewerBtn.setOnClickListener(v -> {
+//            Intent intent = new Intent(MainActivity.this, ArModelViewerActivity.class);
+//            // Ако искаш да предадеш път до модела:
+//            intent.putExtra("modelPath", "models/ram.g3db");
+//            startActivity(intent);
         });
     }
 

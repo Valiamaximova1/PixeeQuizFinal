@@ -33,7 +33,9 @@
         <activity android:name=".activity.WelcomeActivity" />
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.RegistrationActivity" />
-        <activity android:name=".activity.ArModelViewerActivity" />
+<!--        <activity android:name=".activity.ArModelViewerActivity" />-->
+        <activity android:name=".activity.Add3DQuestionActivity" />
+
 
     </application>
 

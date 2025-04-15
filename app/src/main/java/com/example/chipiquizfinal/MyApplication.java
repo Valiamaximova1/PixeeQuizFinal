@@ -62,10 +62,52 @@ public class MyApplication extends Application {
         admin.setDailyPractice(10);
 
 
+        User oli = new User();
+        oli.setEmail("oli");
+//        admin.setEmail("oli@pixee.com");
+        oli.setPassword("1234");
+        oli.setUsername("Olimpia");
+        oli.setFirstName("Olimpia");
+        oli.setLastName("Maximova");
+        oli.setRole("user");
+        oli.setLanguage("Hardware");
+        oli.setLevel(1);
+        oli.setPoints(0);
+        oli.setLives(5);
+        oli.setConsecutiveDays(0);
+        oli.setFreezeDay(false);
+        oli.setDailyPractice(10);
+        oli.setSelectedLanguageCode("bg");
+
+        User val = new User();
+        val.setEmail("val");
+//        val.setEmail("val@pixee.com");
+        val.setPassword("1234");
+        val.setUsername("Val");
+        val.setFirstName("Valentina");
+        val.setLastName("Maximova");
+        val.setRole("user");
+        val.setLanguage("C");
+        val.setLevel(1);
+        val.setPoints(0);
+        val.setLives(5);
+        val.setConsecutiveDays(0);
+        val.setFreezeDay(false);
+        val.setDailyPractice(10);
+        val.setSelectedLanguageCode("en");
+
+
 
         if (userDao.getUserByEmail(admin.getEmail()) == null) {
             userDao.insert(admin);
         }
+        if (userDao.getUserByEmail(oli.getEmail()) == null) {
+            userDao.insert(oli);
+        }
+        if (userDao.getUserByEmail(val.getEmail()) == null) {
+            userDao.insert(val);
+        }
+
 
 //        preloadJavaQuestions();
     }
