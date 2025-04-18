@@ -23,6 +23,17 @@
     <string name="create_profile">Създай профил</string>
     <string name="profile_created_successfully">Профилът е създаден успешно!</string>
 
+
+
+    <string name="profile">Профил</string>
+    <string name="change_password">Смени паролата</string>
+    <string name="new_password">Нова парола</string>
+    <string name="_120">⭐ Точки: 120</string>
+    <string name="_3">🔥 Стрик: 3</string>
+    <string name="_5">❤️ Животи: 5</string>
+    <string name="exit">Изход</string>
+
+
     <!-- Errors -->
     <string name="fill_all_fields">Моля, попълни всички полета.</string>
     <string name="email_exists">Потребител с този имейл вече съществува.</string>
@@ -44,8 +55,17 @@
     <string name="next_question">Продължи</string>
     <string name="exercise_complete">Упражнението е завършено! +10 точки</string>
     <string name="no_questions">Няма въпроси за това упражнение.</string>
+    <string name="choose_photo">Избери снимка</string>
+    <string name="change_language">Смени езика</string>
+    <string name="exercise_title">Упражнение</string>
+    <string name="exercise_completed">Браво! Вие печелите 10 точки!</string>
+    <string name="search_users_hint">Търси...</string>
+    <string name="add_friend">Добави приятел</string>
+    <string name="profile_image">Снимка</string>
+    <string name="nav_community">Общност</string>
 
-<!--    &lt;!&ndash; Language Dialog &ndash;&gt;-->
+
+    <!--    &lt;!&ndash; Language Dialog &ndash;&gt;-->
 <!--    <string name="select_language_dialog">Избери език</string>-->
 <!--    <string name="bulgarian">Български</string>-->
 <!--    <string name="english">Английски</string>-->

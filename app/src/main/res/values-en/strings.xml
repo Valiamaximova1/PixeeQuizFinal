@@ -22,6 +22,15 @@
     <string name="create_profile">Create Profile</string>
     <string name="profile_created_successfully">Profile created successfully!</string>
 
+    <string name="profile">Profile</string>
+
+    <string name="change_password">Change password</string>
+    <string name="new_password">New password</string>
+    <string name="_120">⭐ Points: 120</string>
+    <string name="_3">🔥 Streak: 3</string>
+    <string name="_5">❤️ Lives: 5</string>
+    <string name="exit">Exit</string>
+
     <!-- Errors -->
     <string name="fill_all_fields">Please fill in all fields.</string>
     <string name="email_exists">User with this email already exists.</string>
@@ -36,6 +45,7 @@
     <string name="menu_rewards">Rewards</string>
     <string name="menu_profile">Profile</string>
 
+    <string name="choose_photo">Choose photo</string>
     <!-- Quiz -->
     <string name="correct_answer">✅ Correct!</string>
     <string name="wrong_answer">❌ Wrong!</string>
@@ -43,8 +53,13 @@
     <string name="next_question">Continue</string>
     <string name="exercise_complete">Exercise completed! +10 points</string>
     <string name="no_questions">No questions for this exercise.</string>
+    <string name="change_language">Choose language</string>
+    <string name="search_users_hint">Търси...</string>
+    <string name="add_friend">Добави приятел</string>
+    <string name="profile_image">Снимка</string>
+    <string name="nav_community">Общност</string>
 
-<!--    &lt;!&ndash; Language Dialog &ndash;&gt;-->
+    <!--    &lt;!&ndash; Language Dialog &ndash;&gt;-->
 <!--    <string name="select_language_dialog">Select Language</string>-->
 <!--    <string name="bulgarian">Bulgarian</string>-->
 <!--    <string name="english">English</string>-->

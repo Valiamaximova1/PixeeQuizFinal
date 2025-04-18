@@ -8,57 +8,20 @@
     android:background="@color/white"
     tools:context=".activity.MainActivity">
 
-    <!-- Горна секция -->
-    <LinearLayout
-        android:id="@+id/topSection"
+    <!-- Вмъкваме header-а -->
+    <include
+        android:id="@+id/headerInclude"
+        layout="@layout/header_main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical">
-
-        <Spinner
-            android:id="@+id/languageSwitcher"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:entries="@array/programming_languages_display"
-            android:layout_weight="1" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginStart="12dp"
-            android:gravity="center">
-
-            <ImageView android:src="@drawable/streak" android:layout_width="24dp" android:layout_height="24dp" />
-            <TextView android:id="@+id/streakCount" android:text="7" android:layout_marginEnd="12dp"  android:layout_height="wrap_content" android:layout_width="wrap_content"/>
-
-            <ImageView android:src="@drawable/points" android:layout_width="24dp" android:layout_height="24dp" />
-            <TextView android:id="@+id/pointsCount" android:text="345" android:layout_marginEnd="12dp" android:layout_height="wrap_content" android:layout_width="wrap_content"/>
-
-            <ImageView android:src="@drawable/heart" android:layout_width="24dp" android:layout_height="24dp"  />
-            <TextView android:id="@+id/livesCount" android:text="5" android:layout_height="wrap_content" android:layout_width="wrap_content" />
-            <ImageButton
-                android:id="@+id/changeLanguageBtn"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/language"
-                android:backgroundTintMode="@color/white"/>
-
-        </LinearLayout>
-    </LinearLayout>
-
-
-
+        android:layout_height="wrap_content"/>
 
     <!-- Пътечка с упражнения -->
     <ScrollView
         android:id="@+id/scrollPath"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/headerInclude"
         android:layout_above="@+id/bottomNavigationView"
-        android:layout_below="@id/topSection"
         android:paddingTop="32dp"
         android:paddingBottom="16dp"
         android:paddingStart="16dp"
@@ -70,21 +33,36 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal" />
-
     </ScrollView>
 
+    <!-- Бутон за чат -->
     <Button
-        android:id="@+id/openArViewerBtn"
+        android:id="@+id/buttonOpenChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Виж модел в AR"
-        android:layout_marginTop="50dp"
-        android:layout_gravity="center"
+        android:text="Чат"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="60dp"
         android:background="@drawable/rounded_button_primary"
         android:textColor="@android:color/white"
         android:padding="10dp"
         android:textAllCaps="false"
         android:textSize="16sp"/>
+
+    <!-- Бутон за сканиране на QR -->
+    <Button
+        android:id="@+id/scanQrBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Scan"
+        android:layout_alignParentStart="true"
+        android:layout_margin="60dp"
+        android:background="@drawable/rounded_button_primary"
+        android:textColor="@android:color/white"
+        android:padding="10dp"
+        android:textAllCaps="false"
+        android:textSize="16sp"/>
+
     <!-- Долно меню -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"

@@ -29,11 +29,35 @@
             android:textSize="35sp"
             android:textStyle="bold" />
 
+
+        <ImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/profile_photo"
+            android:background="@drawable/circle_background"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/selectImageBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_photo" />
+
+
+        <EditText
+            android:id="@+id/emailInput"
+            style="@style/ModernInput"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress" />
+
         <EditText android:id="@+id/firstNameInput"
             style="@style/ModernInput" android:inputType="text" android:hint="@string/first_name"/>
         <EditText android:id="@+id/lastNameInput" android:inputType="text" style="@style/ModernInput" android:hint="@string/last_name"/>
         <EditText android:id="@+id/usernameInput" android:inputType="text" style="@style/ModernInput" android:hint="@string/username"/>
-        <EditText android:id="@+id/emailInput"  style="@style/ModernInput" android:hint="@string/email" android:inputType="textEmailAddress"/>
+
         <EditText android:id="@+id/passwordInput" style="@style/ModernInput" android:hint="@string/password" android:inputType="textPassword"/>
         <Spinner
             android:id="@+id/languageSpinner"

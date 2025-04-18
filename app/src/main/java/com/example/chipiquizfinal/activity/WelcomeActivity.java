@@ -97,8 +97,6 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
             }
         }
-
-        Toast.makeText(this, "Упражненията са създадени успешно ✅", Toast.LENGTH_SHORT).show();
     }
 
 

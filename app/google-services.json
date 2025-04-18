@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "460427073696",
+    "firebase_url": "https://pixee-da19f-default-rtdb.firebaseio.com",
+    "project_id": "pixee-da19f",
+    "storage_bucket": "pixee-da19f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:460427073696:android:f0d2a83487ab514030d1c5",
+        "android_client_info": {
+          "package_name": "com.example.chipiquizfinal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDbVXucBJRe73Gyw6KnSCD0ZJMPboxgNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

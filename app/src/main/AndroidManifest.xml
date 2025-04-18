@@ -2,9 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
+
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@android:drawable/sym_def_app_icon"
@@ -23,20 +34,25 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.MainActivity"
+            android:configChanges="locale|layoutDirection|orientation|screenSize" />
         <activity android:name=".activity.AdminPanelActivity" />
         <activity android:name=".activity.UserListActivity" />
         <activity android:name=".activity.AddMultipleChoiceQuestionActivity" />
         <activity android:name=".activity.SelectQuestionTypeActivity" />
         <activity android:name=".activity.ExerciseActivity" />
-        <activity android:name=".activity.LessonActivity" />
+        <activity android:name=".activity.LessonActivity"
+            android:configChanges="locale|layoutDirection|orientation|screenSize"/>
         <activity android:name=".activity.WelcomeActivity" />
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.RegistrationActivity" />
-<!--        <activity android:name=".activity.ArModelViewerActivity" />-->
-        <activity android:name=".activity.Add3DQuestionActivity" />
+        <activity android:name=".activity.ChatActivity" />
+        <activity android:name=".activity.ProfileActivity"
+            android:configChanges="locale|layoutDirection|orientation|screenSize"/>
+        <activity android:name=".activity.AllUsersActivity" />
 
-
+        <activity android:name=".activity.QRScannerActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

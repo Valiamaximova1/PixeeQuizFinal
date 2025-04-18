@@ -16,9 +16,10 @@ import com.example.chipiquizfinal.entity.*;
                 QuestionTranslation.class,
                 QuestionAnswerOption.class,
                 AnswerOptionTranslation.class,
-                UserProgress.class
+                UserProgress.class,
+                Friendship.class
         },
-        version = 8,
+        version = 10,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -33,4 +34,5 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract AnswerOptionTranslationDao answerOptionTranslationDao();
 
     public abstract UserProgressDao userProgressDao();
+    public abstract FriendshipDao friendshipDao();
 }

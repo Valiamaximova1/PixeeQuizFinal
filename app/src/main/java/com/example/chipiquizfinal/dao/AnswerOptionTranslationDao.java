@@ -17,6 +17,6 @@ public interface AnswerOptionTranslationDao {
     @Query("SELECT * FROM answer_option_translations WHERE option_id = :optionId AND language = :language LIMIT 1")
     AnswerOptionTranslation getByOptionIdAndLanguage(int optionId, String language);
 
-    @Query("SELECT * FROM answer_option_translations WHERE option_id = :optionId")
+       @Query("SELECT * FROM answer_option_translations WHERE option_id = :optionId")
     List<AnswerOptionTranslation> getAllByOptionId(int optionId);
 }

@@ -1,6 +1,7 @@
 package com.example.chipiquizfinal.entity;
 
 
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -38,7 +39,9 @@ public class User {
     private String role = "user";
     @ColumnInfo(name = "selected_language_code")
     private String selectedLanguageCode = "bg";
-
+    @Nullable
+    @ColumnInfo(name = "profile_image_uri")
+    private String profileImagePath;
 
     public User() {}
 
@@ -160,5 +163,13 @@ public class User {
 
     public void setSelectedLanguageCode(String selectedLanguageCode) {
         this.selectedLanguageCode = selectedLanguageCode;
+    }
+    @Nullable
+    public String getProfileImagePath() {
+        return profileImagePath;
+    }
+    @Nullable
+    public void setProfileImagePath(String profileImagePath) {
+        this.profileImagePath = profileImagePath;
     }
 }

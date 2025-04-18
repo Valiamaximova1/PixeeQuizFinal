@@ -15,11 +15,12 @@ import com.example.chipiquizfinal.MyApplication;
 import com.example.chipiquizfinal.R;
 import com.example.chipiquizfinal.dao.*;
 import com.example.chipiquizfinal.entity.*;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity  {
 
     private LinearLayout lessonPathContainer;
     private Spinner languageSwitcher;
@@ -33,10 +34,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 1. Зареди езика от SharedPreferences (по подразбиране "bg")
-        SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
-        String langCode = prefs.getString("language", "bg");
-        setLocale(langCode);  // приложи езика
+        setContentView(R.layout.activity_main);
+        setupHeader();
+
+
+        String selectedLangCode = "bg";  // или "bg"
+
+        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+        prefs.edit()
+                .putString("lang", selectedLangCode)
+                .apply();
+
+// Ако искате веднага да презаредите UI:
+//        recreate();
+
+
+//        // 1. Зареди езика от SharedPreferences (по подразбиране "bg")
+//        SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
+//        String langCode = prefs.getString("language", "bg");
+//        setLocale(langCode);  // приложи езика
 
         setContentView(R.layout.activity_main);
 
@@ -49,6 +65,15 @@ public class MainActivity extends AppCompatActivity {
 
         userDao = MyApplication.getDatabase().userDao();
         ExerciseDao exerciseDao = MyApplication.getDatabase().exerciseDao();
+
+
+        // в onCreate(...)
+        Button scanQrBtn = findViewById(R.id.scanQrBtn);
+        scanQrBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, QRScannerActivity.class);
+            startActivity(intent);
+        });
+
 
         // 2. Вземаме текущия потребител по имейл
         currentUser = userDao.getUserByEmail(MyApplication.getLoggedEmail());
@@ -76,13 +101,40 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        Button openArViewerBtn = findViewById(R.id.openArViewerBtn);
-        openArViewerBtn.setOnClickListener(v -> {
-//            Intent intent = new Intent(MainActivity.this, ArModelViewerActivity.class);
-//            // Ако искаш да предадеш път до модела:
-//            intent.putExtra("modelPath", "models/ram.g3db");
-//            startActivity(intent);
+        Button buttonOpenChat = findViewById(R.id.buttonOpenChat);
+        buttonOpenChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+                startActivity(intent);
+            }
         });
+
+
+
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+        bottomNav.setSelectedItemId(R.id.nav_home);
+
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_home) {
+                // already here
+                return true;
+            } else if (id == R.id.nav_community) {
+                startActivity(new Intent(this, AllUsersActivity.class));
+                return true;
+            } else if (id == R.id.nav_profile) {
+                startActivity(new Intent(this, ProfileActivity.class));
+                return true;
+            }
+            return false;
+        });
+
+
+
+
+
+
     }
 
 

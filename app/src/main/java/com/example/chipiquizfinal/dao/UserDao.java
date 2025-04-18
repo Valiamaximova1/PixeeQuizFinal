@@ -15,7 +15,7 @@ import java.util.List;
 public interface UserDao {
 
     @Insert
-    void insert(User user);
+    long insert(User user);
 
     @Update
     void update(User user);
@@ -29,6 +29,13 @@ public interface UserDao {
     @Query("SELECT COUNT(*) FROM users")
     int countUsers();
 
+    @Query("SELECT * FROM users WHERE id = :userId LIMIT 1")
+    User getUserById(int userId);
+
     @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
     User getUserByEmail(String email);
+
+
+    @Query("SELECT * FROM users WHERE username LIKE '%'||:query||'%' OR email LIKE '%'||:query||'%'")
+    List<User> searchUsers(String query);
 }

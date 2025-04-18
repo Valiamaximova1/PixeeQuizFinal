@@ -1,0 +1,152 @@
+[
+  {
+    "language": "Java",
+    "level": 1,
+    "exercise": 1,
+    "position": 1,
+    "type": "multiple choice",
+    "textEn": "Which of these is a valid declaration of the main method in Java?",
+    "textBg": "Кое от следните е валидно деклариране на main метода в Java?",
+    "answers": [
+      { "textEn": "public static void main(String[] args)", "textBg": "public static void main(String[] args)", "correct": true },
+      { "textEn": "public void main(String args)",          "textBg": "public void main(String args)",           "correct": false },
+      { "textEn": "static public main(String[] args)",      "textBg": "static public main(String[] args)",     "correct": false },
+      { "textEn": "public static int main(String[] args)",  "textBg": "public static int main(String[] args)", "correct": false }
+    ]
+  },
+  {
+    "language": "Java",
+    "level": 1,
+    "exercise": 1,
+    "position": 2,
+    "type": "multiple choice",
+    "textEn": "What is the size of an int variable in Java?",
+    "textBg": "Какъв е размерът на променлива от тип int в Java?",
+    "answers": [
+      { "textEn": "16 bits", "textBg": "16 бита", "correct": false },
+      { "textEn": "32 bits", "textBg": "32 бита", "correct": true },
+      { "textEn": "64 bits", "textBg": "64 бита", "correct": false },
+      { "textEn": "Depends on the platform", "textBg": "Зависи от платформата", "correct": false }
+    ]
+  },
+  {
+    "language": "Java",
+    "level": 1,
+    "exercise": 1,
+    "position": 3,
+    "type": "multiple choice",
+    "textEn": "Which keyword is used to inherit a class in Java?",
+    "textBg": "Коя ключова дума се използва за наследяване на клас в Java?",
+    "answers": [
+      { "textEn": "implements", "textBg": "implements", "correct": false },
+      { "textEn": "extends",    "textBg": "extends",    "correct": true  },
+      { "textEn": "inherits",   "textBg": "inherits",   "correct": false },
+      { "textEn": "super",      "textBg": "super",      "correct": false }
+    ]
+  },
+  {
+    "language": "Java",
+    "level": 1,
+    "exercise": 1,
+    "position": 4,
+    "type": "multiple choice",
+    "textEn": "What will be the output of:\n```java\nSystem.out.println(5 + 3 + \"2\");\n```",
+    "textBg": "Какъв ще бъде резултатът от:\n```java\nSystem.out.println(5 + 3 + \"2\");\n```",
+    "answers": [
+      { "textEn": "82",  "textBg": "82",  "correct": true },
+      { "textEn": "102", "textBg": "102", "correct": false },
+      { "textEn": "56",  "textBg": "56",  "correct": false },
+      { "textEn": "8+2",  "textBg": "8+2",  "correct": false }
+    ]
+  },
+  {
+    "language": "Java",
+    "level": 1,
+    "exercise": 1,
+    "position": 5,
+    "type": "multiple choice",
+    "textEn": "Which collection allows duplicate elements?",
+    "textBg": "Коя колекция позволява повтарящи се елементи?",
+    "answers": [
+      { "textEn": "Set",      "textBg": "Set",      "correct": false },
+      { "textEn": "List",     "textBg": "List",     "correct": true  },
+      { "textEn": "Map",      "textBg": "Map",      "correct": false },
+      { "textEn": "Queue",    "textBg": "Queue",    "correct": false }
+    ]
+  },
+  {
+    "language": "Java",
+    "level": 1,
+    "exercise": 1,
+    "position": 6,
+    "type": "multiple choice",
+    "textEn": "Which exception is thrown when dividing by zero?",
+    "textBg": "Кое изключение се хвърля при деление на нула?",
+    "answers": [
+      { "textEn": "ArithmeticException",     "textBg": "ArithmeticException",     "correct": true  },
+      { "textEn": "NullPointerException",    "textBg": "NullPointerException",    "correct": false },
+      { "textEn": "NumberFormatException",   "textBg": "NumberFormatException",   "correct": false },
+      { "textEn": "IllegalArgumentException", "textBg": "IllegalArgumentException", "correct": false }
+    ]
+  },
+  {
+    "language": "Java",
+    "level": 1,
+    "exercise": 1,
+    "position": 7,
+    "type": "multiple choice",
+    "textEn": "What is the parent class of all classes in Java?",
+    "textBg": "Кой е родителският клас на всички класове в Java?",
+    "answers": [
+      { "textEn": "Object",   "textBg": "Object",   "correct": true  },
+      { "textEn": "Class",    "textBg": "Class",    "correct": false },
+      { "textEn": "Base",     "textBg": "Base",     "correct": false },
+      { "textEn": "String",   "textBg": "String",   "correct": false }
+    ]
+  },
+  {
+    "language": "Java",
+    "level": 1,
+    "exercise": 1,
+    "position": 8,
+    "type": "multiple choice",
+    "textEn": "Which keyword prevents a method from being overridden?",
+    "textBg": "Коя ключова дума предотвратява презаписването на метод?",
+    "answers": [
+      { "textEn": "static",   "textBg": "static",   "correct": false },
+      { "textEn": "final",    "textBg": "final",    "correct": true  },
+      { "textEn": "abstract", "textBg": "abstract", "correct": false },
+      { "textEn": "private",  "textBg": "private",  "correct": false }
+    ]
+  },
+  {
+    "language": "Java",
+    "level": 1,
+    "exercise": 1,
+    "position": 9,
+    "type": "multiple choice",
+    "textEn": "How do you declare an array of integers of size 10?",
+    "textBg": "Как се декларира масив от цели числа с размер 10?",
+    "answers": [
+      { "textEn": "int[] arr = new int[10];",    "textBg": "int[] arr = new int[10];",    "correct": true  },
+      { "textEn": "int arr[] = new int();",      "textBg": "int arr[] = new int();",      "correct": false },
+      { "textEn": "int arr = new int[10];",      "textBg": "int arr = new int[10];",      "correct": false },
+      { "textEn": "int[] arr = new int();",      "textBg": "int[] arr = new int();",      "correct": false }
+    ]
+  },
+  {
+    "language": "Java",
+    "level": 1,
+    "exercise": 1,
+    "position": 10,
+    "type": "multiple choice",
+    "textEn": "Which loop is guaranteed to execute at least once?",
+    "textBg": "Кой цикъл се гарантира, че се изпълнява поне веднъж?",
+    "answers": [
+      { "textEn": "for",        "textBg": "for",        "correct": false },
+      { "textEn": "while",      "textBg": "while",      "correct": false },
+      { "textEn": "do-while",   "textBg": "do-while",   "correct": true  },
+      { "textEn": "foreach",    "textBg": "foreach",    "correct": false }
+    ]
+  }
+]

@@ -25,6 +25,8 @@ public interface QuestionDao {
 
     @Query("SELECT * FROM questions WHERE id = :id")
     Question getById(int id);
+    @Query("SELECT COUNT(*) FROM questions")
+    int countQuestions();
 
     @Query("SELECT * FROM questions WHERE exercise_id = :exerciseId")
     List<Question> getQuestionsByExerciseId(int exerciseId);

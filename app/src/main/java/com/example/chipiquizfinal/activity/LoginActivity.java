@@ -58,7 +58,10 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 startActivity(new Intent(this, MainActivity.class));
             }
-
+            getSharedPreferences("user_prefs", MODE_PRIVATE)
+                    .edit()
+                    .putString("logged_email", email)
+                    .apply();
             finish();
         } else {
             Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show();
