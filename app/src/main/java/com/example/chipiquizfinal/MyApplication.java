@@ -1,108 +1,54 @@
 package com.example.chipiquizfinal;
 
-import static android.content.ContentValues.TAG;
-
-import static com.example.chipiquizfinal.AppDatabase.MIGRATION_1_2;
-
 import android.app.Application;
-import android.content.SharedPreferences;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.example.chipiquizfinal.AppDatabase;
-import com.example.chipiquizfinal.dao.AnswerOptionTranslationDao;
-import com.example.chipiquizfinal.dao.ExerciseDao;
-import com.example.chipiquizfinal.dao.ProgrammingLanguageDao;
-import com.example.chipiquizfinal.dao.QuestionAnswerOptionDao;
-import com.example.chipiquizfinal.dao.QuestionDao;
-import com.example.chipiquizfinal.dao.QuestionTranslationDao;
-import com.example.chipiquizfinal.dao.UserDao;
-import com.example.chipiquizfinal.dao.UserLanguageChoiceDao;
-import com.example.chipiquizfinal.entity.AnswerOptionTranslation;
-import com.example.chipiquizfinal.entity.Exercise;
-import com.example.chipiquizfinal.entity.ProgrammingLanguage;
-import com.example.chipiquizfinal.entity.Question;
-import com.example.chipiquizfinal.entity.QuestionAnswerOption;
-import com.example.chipiquizfinal.entity.QuestionTranslation;
-import com.example.chipiquizfinal.entity.User;
-import com.example.chipiquizfinal.entity.UserLanguageChoice;
-import com.google.common.reflect.TypeToken;
 import com.google.firebase.FirebaseApp;
-import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Executors;
+
+import com.example.chipiquizfinal.AppDatabase;
+import com.example.chipiquizfinal.dao.*;
+import com.example.chipiquizfinal.entity.*;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 
 public class MyApplication extends Application {
-
     private static AppDatabase db;
-    private static final String PREFS_NAME = "app_prefs";
-    private static final String KEY_SEEDED = "questions_seeded";
     private static String loggedEmail;
-    private UserDao userDao;
-    private QuestionAnswerOptionDao optionDao;
-    private QuestionTranslationDao translationDao;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Инициализираме Firebase
+        FirebaseApp.initializeApp(this);
         Log.d("APP", ">>> MyApplication.onCreate()");
-//
-//        // 1) Създаваме/отворяме базата
+
+        // Създаваме/отворяме Room базата
         db = Room.databaseBuilder(getApplicationContext(),
                         AppDatabase.class, "chipiquiz-db")
-                .fallbackToDestructiveMigration()  // или осигурете реална миграция до v2
+                .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build();
 
-//        db = Room.databaseBuilder(getApplicationContext(),
-//                        AppDatabase.class, "chipiquiz-db")
-//                .addMigrations(MIGRATION_1_2)
-//                .fallbackToDestructiveMigration()
-//                .allowMainThreadQueries()
-//                // ПРАВИЛНО:
-//                .addCallback(new RoomDatabase.Callback() {
-//                    @Override
-//                    public void onCreate(@NonNull SupportSQLiteDatabase db) {
-//                        super.onCreate(db);
-//                        // Тук пускаш seedQuestionsAndAnswers() или каквото ти трябва
-//                        Executors.newSingleThreadExecutor().execute(() -> {
-//                            seedQuestionsAndAnswers();
-//                        });
-//                    }
-//
-//                    @Override
-//                    public void onOpen(@NonNull SupportSQLiteDatabase db) {
-//                        super.onOpen(db);
-//                        // при нужда – логика за open
-//                    }
-//                })
-//                .build();
+        // Форсираме open, за да стартираме миграции и да имаме writable DB от начало
+        db.getOpenHelper().getWritableDatabase();
 
-
-
-
-//        db.getOpenHelper().getWritableDatabase();
-
-        // 2) Директно викаме seed, но той вътре ще провери дали вече има въпроси
+        // Seed-ват въпросите (ако още не са seed-нати)
         seedQuestionsAndAnswers();
 
+        // Добавяме програмените езици (ако липсват)
+        preloadLanguages();
 
-        preloadLanguages(); // 👈 Добавяне на езици ако не съществуват
-
+        // Seed-ват default потребителите (admin, oli, val)
         seedDefaultUsers();
-//        userDao = MyApplication.getDatabase().userDao();
-//        replenishLives(userDao);
-
     }
 
     public static AppDatabase getDatabase() {
@@ -118,34 +64,31 @@ public class MyApplication extends Application {
     }
 
     private void preloadLanguages() {
-        if (db.programmingLanguageDao().getAllLanguages().isEmpty()) {
+        ProgrammingLanguageDao langDao = db.programmingLanguageDao();
+        if (langDao.getAllLanguages().isEmpty()) {
             List<String> languages = Arrays.asList(
-                    "Java", "C", "C++", "C#", "JavaScript", "HTML & CSS", "Hardware", "Python"
+                    "Java", "C", "C++", "C#", "JavaScript",
+                    "HTML & CSS", "Hardware", "Python"
             );
-
             for (String name : languages) {
                 ProgrammingLanguage lang = new ProgrammingLanguage();
                 lang.setName(name);
-                db.programmingLanguageDao().insert(lang);
+                langDao.insert(lang);
             }
         }
     }
 
     private void seedQuestionsAndAnswers() {
         Log.d("SEED", ">>> seedQuestionsAndAnswers() start");
-
-        // Зареждаме JSON
         String json = loadJSONFromAsset("questions_with_answers.json");
-        Log.d("SEED", "Loaded JSON length=" + json.length());
         if (json.isEmpty()) {
-            Log.e("SEED", "JSON от assets е празен или не намерен!");
+            Log.e("SEED", "JSON от assets не е намерен или е празен!");
             return;
         }
 
         QuestionDao questionDao = db.questionDao();
-        // Ако вече има въпроси, спираме
         if (questionDao.countQuestions() > 0) {
-            Log.d("SEED", "Вече има seed-нати въпроси, пропускаме.");
+            Log.d("SEED", "Вече има seed-нати въпроси, пропускам.");
             return;
         }
 
@@ -155,18 +98,17 @@ public class MyApplication extends Application {
         QuestionAnswerOptionDao optDao= db.questionAnswerOptionDao();
         AnswerOptionTranslationDao trDao = db.answerOptionTranslationDao();
 
-        Type listType = new TypeToken<List<QuestionSeed>>(){}.getType();
-        List<QuestionSeed> seeds = new Gson().fromJson(json, listType);
+        TypeToken<List<QuestionSeed>> typeToken = new TypeToken<List<QuestionSeed>>() {};
+        List<QuestionSeed> seeds = new Gson().fromJson(json, typeToken.getType());
 
         for (QuestionSeed qs : seeds) {
-            // Foreign keys
             ProgrammingLanguage lang = langDao.getByName(qs.language);
             if (lang == null) continue;
             Exercise ex = exerciseDao
                     .getExerciseByLanguageLevelPosition(lang.getId(), qs.level, qs.exercise);
             if (ex == null) continue;
 
-            // 1) Insert Question без correctAnswerOptionId
+            // 1) Insert Question
             Question q = new Question();
             q.setLanguageId(lang.getId());
             q.setLevel(qs.level);
@@ -183,7 +125,7 @@ public class MyApplication extends Application {
             qt.setText(qs.textBg);
             qtDao.insert(qt);
 
-            // 3) Insert опции и намиране на правилната
+            // 3) Опции и намиране на правилната
             int correctOptionId = -1;
             for (AnswerSeed a : qs.answers) {
                 QuestionAnswerOption opt = new QuestionAnswerOption();
@@ -191,10 +133,7 @@ public class MyApplication extends Application {
                 opt.setAnswerText(a.textEn);
                 opt.setCorrect(a.correct);
                 long oid = optDao.insert(opt);
-
-                if (a.correct) {
-                    correctOptionId = (int) oid;
-                }
+                if (a.correct) correctOptionId = (int) oid;
 
                 // превод на опция
                 AnswerOptionTranslation tr = new AnswerOptionTranslation();
@@ -206,7 +145,7 @@ public class MyApplication extends Application {
 
             // 4) Update Question с correctAnswerOptionId
             if (correctOptionId != -1) {
-                q.setId((int) qid);  // уверяваме се, че id-то е сетнато
+                q.setId((int) qid);
                 q.setCorrectAnswerOptionId(correctOptionId);
                 questionDao.update(q);
             }
@@ -215,126 +154,80 @@ public class MyApplication extends Application {
         Log.d("SEED", "Seed-ването на въпроси и отговори е завършило успешно");
     }
 
-
     private String loadJSONFromAsset(String filename) {
         try (InputStream is = getAssets().open(filename)) {
-            byte[] buffer = new byte[is.available()];
-            is.read(buffer);
-            String s = new String(buffer, StandardCharsets.UTF_8);
-            Log.d("SEED", "Loaded JSON of length " + s.length());
-            return s;
+            byte[] buf = new byte[is.available()];
+            is.read(buf);
+            return new String(buf, StandardCharsets.UTF_8);
         } catch (IOException e) {
             Log.e("SEED", "Грешка при четене на " + filename, e);
             return "";
         }
     }
 
-    // Helper seed‑класове
-    static class QuestionSeed {
-        String language;
-        int level;
-        int exercise;
-        int position;
-        String type;
-        String textEn;
-        String textBg;
-        List<AnswerSeed> answers;
-    }
-
-    static class AnswerSeed {
-        String textEn;
-        String textBg;
-        boolean correct;
-    }
-
     private void seedDefaultUsers() {
         UserDao userDao = db.userDao();
-        ProgrammingLanguageDao langDao = db.programmingLanguageDao();
         UserLanguageChoiceDao choiceDao = db.userLanguageChoiceDao();
+        ProgrammingLanguageDao langDao = db.programmingLanguageDao();
 
-        // -------- Admin --------
         if (userDao.getUserByEmail("admin") == null) {
-            long adminId = insertUser(userDao,
+            long id = insertUser(userDao,
                     "admin","1234","Admin","Pixee","Admin","admin","Java");
-            insertUserLanguageChoice(choiceDao, langDao, adminId, "Java", 1, 10);
+            insertUserLanguageChoice(choiceDao, langDao, id, "Java", 1, 10);
         }
-
-        // ------- Olimpia -------
         if (userDao.getUserByEmail("oli") == null) {
-            long oliId = insertUser(userDao,
+            long id = insertUser(userDao,
                     "oli","1234","Olimpia","Olimpia","Maximova","user","Java");
-            insertUserLanguageChoice(choiceDao, langDao, oliId, "Java", 1, 10);
+            insertUserLanguageChoice(choiceDao, langDao, id, "Java", 1, 10);
         }
-
-        // ------- Valentina -------
         if (userDao.getUserByEmail("val") == null) {
-            long valId = insertUser(userDao,
+            long id = insertUser(userDao,
                     "val","1234","Val","Valentina","Maximova","user","Java");
-            insertUserLanguageChoice(choiceDao, langDao, valId, "Java", 1, 10);
+            insertUserLanguageChoice(choiceDao, langDao, id, "Java", 1, 10);
         }
     }
 
-    /** Създава User и връща новото му ID */
-    private long insertUser(UserDao userDao,
-                            String email,
-                            String password,
-                            String username,
-                            String firstName,
-                            String lastName,
-                            String role,
-                            String languageName) {
+    private long insertUser(UserDao uDao, String email, String pwd,
+                            String username, String first, String last,
+                            String role, String langName) {
         User u = new User();
         u.setEmail(email);
-        u.setPassword(password);
+        u.setPassword(pwd);
         u.setUsername(username);
-        u.setFirstName(firstName);
-        u.setLastName(lastName);
+        u.setFirstName(first);
+        u.setLastName(last);
         u.setRole(role);
-        u.setLanguage(languageName);
+        u.setLanguage(langName);
         u.setLevel(1);
         u.setPoints(0);
         u.setLives(5);
         u.setConsecutiveDays(0);
         u.setFreezeDay(false);
         u.setDailyPractice(10);
-        return userDao.insert(u);
+        return uDao.insert(u);
     }
 
-    /** Създава запис в user_language_choices */
     private void insertUserLanguageChoice(UserLanguageChoiceDao choiceDao,
                                           ProgrammingLanguageDao langDao,
-                                          long userId,
-                                          String languageName,
-                                          int level,
-                                          int dailyPractice) {
-        ProgrammingLanguage lang = langDao.getByName(languageName);
+                                          long userId, String langName,
+                                          int level, int practice) {
+        ProgrammingLanguage lang = langDao.getByName(langName);
         if (lang == null) return;
-        UserLanguageChoice choice = new UserLanguageChoice();
-        choice.setUserId((int) userId);
-        choice.setLanguageId(lang.getId());
-        choice.setLevel(level);
-        choice.setDailyPractice(dailyPractice);
-        choiceDao.insert(choice);
+        UserLanguageChoice c = new UserLanguageChoice();
+        c.setUserId((int) userId);
+        c.setLanguageId(lang.getId());
+        c.setLevel(level);
+        c.setDailyPractice(practice);
+        choiceDao.insert(c);
     }
 
-    public static void replenishLives(UserDao userDao, User u) {
-        final int MAX_LIVES = 5;
-        long now = System.currentTimeMillis();
-        long last = u.getLastLifeTimestamp();
-        if (last == 0) {
-            // инициализираме първоначално
-            u.setLastLifeTimestamp(now);
-            userDao.update(u);
-            return;
-        }
-        long hoursPassed = (now - last) / (1000 * 60 * 60);
-        if (hoursPassed > 0) {
-            int newLives = Math.min(MAX_LIVES, u.getLives() + (int)hoursPassed);
-            long newTimestamp = last + hoursPassed * (1000 * 60 * 60);
-            u.setLives(newLives);
-            u.setLastLifeTimestamp(newTimestamp);
-            userDao.update(u);
-        }
+    // Вътрешни seed‑класове за JSON parsing
+    private static class QuestionSeed {
+        String language; int level, exercise, position;
+        String type, textEn, textBg;
+        List<AnswerSeed> answers;
     }
-
+    private static class AnswerSeed {
+        String textEn, textBg; boolean correct;
+    }
 }
