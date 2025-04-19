@@ -19,7 +19,7 @@
         android:id="@+id/itemUsername"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="5dp"
         android:layout_weight="1"
         android:textSize="16sp"
         android:textColor="@android:color/black" />
@@ -27,8 +27,21 @@
     <!-- Бутон за добавка/одобрение -->
     <Button
         android:id="@+id/itemBtn"
+        android:layout_width="83dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="10dp"
+        android:textSize="10dp"
+        android:text="@string/accept" />
+    <TextView
+        android:id="@+id/viewProf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/add_friend" />
+        android:text="Виж профил"
+        android:clickable="true"
+        android:focusable="true"
+        android:textColor="@color/purple_dark"
+        android:padding="8dp"/>
+
 
 </LinearLayout>

@@ -9,21 +9,27 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.chipiquizfinal.MyApplication;
 import com.example.chipiquizfinal.R;
+import com.example.chipiquizfinal.UserHelper;
 import com.example.chipiquizfinal.dao.*;
 import com.example.chipiquizfinal.entity.*;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -169,6 +175,10 @@ public class RegistrationActivity extends AppCompatActivity {
             choice.setDailyPractice(practiceMinutes);
             userLanguageChoiceDao.insert(choice);
         }
+        saveUserToCloud(createdUser);
+        FirebaseMessaging.getInstance().getToken()
+                .addOnSuccessListener(UserHelper::updateFcmToken);
+
 
         Toast.makeText(this, "Профилът е създаден!", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, LoginActivity.class));
@@ -241,4 +251,42 @@ public class RegistrationActivity extends AppCompatActivity {
         }
         return bitmap;
     }
+
+
+    private void saveUserToCloud(User user) {
+        // 1) Подготвя данните в Map
+        Map<String,Object> data = new HashMap<>();
+        data.put("email", user.getEmail());
+        data.put("username", user.getUsername());
+        data.put("password", user.getPassword());
+        data.put("firstName", user.getFirstName());       // ← ново
+        data.put("lastName", user.getLastName());         // ← ново
+        data.put("language", user.getLanguage());         // ← ново
+        data.put("points", user.getPoints());
+        data.put("lives", user.getLives());
+        data.put("streak", user.getConsecutiveDays());
+        data.put("selectedLanguage", user.getSelectedLanguageCode());
+
+        // ако си записал локалния път към снимката:
+        data.put("profileImagePath",
+                user.getProfileImagePath() != null ? user.getProfileImagePath() : "");
+        // и инициално празен списък за приятели
+        data.put("friends", new ArrayList<String>());
+
+        // 2) Вкарва в колекцията "users", документът е с името на userId
+        String docId = String.valueOf(user.getId());
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users")
+                .document(docId)
+                .set(data)
+                .addOnSuccessListener(aVoid -> {
+                    // записът е мина успешно
+                    Log.d("CloudSave", "Потребителят е записан в облака: " + docId);
+                })
+                .addOnFailureListener(e -> {
+                    // грешка при запис
+                    Log.e("CloudSave", "Грешка при запис в облака", e);
+                });
+    }
+
 }

@@ -93,6 +93,9 @@ public class ProfileActivity extends BaseActivity {
             if (item.getItemId() == R.id.nav_home) {
                 startActivity(new Intent(this, MainActivity.class));
                 return true;
+            } else if (item.getItemId() == R.id.nav_community) {
+                startActivity(new Intent(this, AllUsersActivity.class));
+                return true;
             }
             return false;
         });
@@ -108,12 +111,10 @@ public class ProfileActivity extends BaseActivity {
     /** Зарежда профилната снимка от currentUser.getPhotoUri() или показва placeholder */
     private void loadProfileImage() {
         String path = currentUser.getProfileImagePath();
-        Toast.makeText(this, "tova se ebawa smennn" + path, Toast.LENGTH_SHORT).show();
 
         if (path != null && !path.isEmpty()) {
             File imgFile = new File(path);
             if (imgFile.exists()) {
-                Toast.makeText(this, "tova se ebawa" + R.drawable.ic_profile_placeholder, Toast.LENGTH_SHORT).show();
 
                 // зареждаме локалния файл с Glide
                 Glide.with(this)
@@ -126,8 +127,7 @@ public class ProfileActivity extends BaseActivity {
             }
         }
         profileImage.setImageResource(R.drawable.ic_profile_placeholder);
-        Toast.makeText(this, "kakwo se sluchva" + R.drawable.ic_profile_placeholder, Toast.LENGTH_SHORT).show();
-    }
+          }
     private void displayUserInfo() {
         usernameText.setText("Username: " + currentUser.getUsername());
         emailText.setText("Email: " + currentUser.getEmail());

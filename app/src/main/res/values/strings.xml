@@ -63,6 +63,9 @@
     <string name="add_friend">Добави приятел</string>
     <string name="profile_image">Снимка</string>
     <string name="nav_community">Общност</string>
+    <string name="viewProf">Виж профил</string>
+    <string name="accept">Одобри</string>
+    <string name="map">Карта</string>
 
 
     <!--    &lt;!&ndash; Language Dialog &ndash;&gt;-->

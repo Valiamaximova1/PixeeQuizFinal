@@ -1,39 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chatRoot"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@color/white">
 
-    <!-- RecyclerView за списък със съобщения -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chatRecyclerView"
+    <!-- Списък със съобщения -->
+    <ListView
+        android:id="@+id/listViewMessages"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/layoutMessageInput" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@null"
+        android:footerDividersEnabled="false"
+        android:paddingBottom="4dp"/>
 
-    <!-- Лейаут за въвеждане на съобщение -->
+    <!-- Поле за въвеждане и бутон Изпрати -->
     <LinearLayout
-        android:id="@+id/layoutMessageInput"
+        android:id="@+id/inputContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:padding="8dp"
-        android:background="#eeeeee">
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp">
 
         <EditText
-            android:id="@+id/editTextMessage"
+            android:id="@+id/messageInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Въведи съобщение" />
+            android:hint="Напиши съобщение..."
+            android:padding="12dp"
+            android:background="@drawable/rounded_input"
+            android:imeOptions="actionSend"
+            android:maxLines="4"
+            android:minLines="1"/>
 
         <Button
-            android:id="@+id/buttonSend"
+            android:id="@+id/sendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_button_primary"
-            android:text="Изпрати" />
-    </LinearLayout>
+            android:text="Изпрати"
+            android:layout_marginStart="8dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"/>
 
-</RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

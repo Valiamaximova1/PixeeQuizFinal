@@ -1,5 +1,8 @@
 package com.example.chipiquizfinal.activity;
 
+
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -15,7 +18,9 @@ import com.example.chipiquizfinal.MyApplication;
 import com.example.chipiquizfinal.R;
 import com.example.chipiquizfinal.dao.*;
 import com.example.chipiquizfinal.entity.*;
+import com.example.chipiquizfinal.FirestoreUser;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 import java.util.Locale;
@@ -29,14 +34,18 @@ public class MainActivity extends BaseActivity  {
     private UserDao userDao;
     private User currentUser;
     private int selectedLanguageId;
+    private FirebaseFirestore db;
     private int currentLevel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
-        setupHeader();
 
+        db = FirebaseFirestore.getInstance();
+
+        // Само за първоначално зареждане на demo акаунти; може после да го махнете
+        seedInitialUsers();
+        setupHeader();
 
         String selectedLangCode = "bg";  // или "bg"
 
@@ -45,14 +54,6 @@ public class MainActivity extends BaseActivity  {
                 .putString("lang", selectedLangCode)
                 .apply();
 
-// Ако искате веднага да презаредите UI:
-//        recreate();
-
-
-//        // 1. Зареди езика от SharedPreferences (по подразбиране "bg")
-//        SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
-//        String langCode = prefs.getString("language", "bg");
-//        setLocale(langCode);  // приложи езика
 
         setContentView(R.layout.activity_main);
 
@@ -76,59 +77,74 @@ public class MainActivity extends BaseActivity  {
 
 
         // 2. Вземаме текущия потребител по имейл
-        currentUser = userDao.getUserByEmail(MyApplication.getLoggedEmail());
+        String email = MyApplication.getLoggedEmail();
+        loadCurrentUser(email,
+                user -> {
+                    // onLoaded
+                    currentUser = user;
+                    setupHeader();
+                    if (currentUser.getSelectedLanguageCode() == null || currentUser.getSelectedLanguageCode().isEmpty()) {
+                        currentUser.setSelectedLanguageCode("bg");
+                        userDao.update(currentUser);
+                    }
 
-        if (currentUser != null) {
-            // Ако не е зададен език, по подразбиране "bg"
-            if (currentUser.getSelectedLanguageCode() == null || currentUser.getSelectedLanguageCode().isEmpty()) {
-                currentUser.setSelectedLanguageCode("bg");
-                userDao.update(currentUser);
-            }
+                    // 3. Вземи езика от UserLanguageChoice таблицата
+                    selectedLanguageId = getLanguageIdForUser(currentUser.getId());
+                    currentLevel = currentUser.getLevel();
 
-            // 3. Вземи езика от UserLanguageChoice таблицата
-            selectedLanguageId = getLanguageIdForUser(currentUser.getId());
-            currentLevel = currentUser.getLevel();
+                    updateStats();
+                    insertExercisesIfNeeded(selectedLanguageId, currentLevel);
 
-            updateStats();
-            insertExercisesIfNeeded(selectedLanguageId, currentLevel);
+                    List<Exercise> exercises = exerciseDao.getExercisesForLevel(selectedLanguageId, currentLevel);
 
-            List<Exercise> exercises = exerciseDao.getExercisesForLevel(selectedLanguageId, currentLevel);
+                    int userProgressIndex = 2;
+                    loadLessonPathZigzag(exercises, userProgressIndex);
 
-            int userProgressIndex = 2;
-            loadLessonPathZigzag(exercises, userProgressIndex);
-        } else {
-            Toast.makeText(this, "User not found!", Toast.LENGTH_SHORT).show();
-        }
+
+                    BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+                    bottomNav.setSelectedItemId(R.id.nav_home);
+
+                    bottomNav.setOnItemSelectedListener(item -> {
+                        int id = item.getItemId();
+                        if (id == R.id.nav_home) {
+                            // already here
+                            return true;
+                        } else if (id == R.id.nav_community) {
+                            startActivity(new Intent(this, AllUsersActivity.class));
+                            return true;
+                        } else if (id == R.id.nav_profile) {
+                            startActivity(new Intent(this, ProfileActivity.class));
+                            return true;
+                        }
+                        else if (id == R.id.nav_map) {
+                            startActivity(new Intent(this, MapActivity.class));
+                            return true;
+                        }
+                        return false;
+                    });
+                },
+                errorMsg -> {
+                    Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+        );
+
 
 
         Button buttonOpenChat = findViewById(R.id.buttonOpenChat);
         buttonOpenChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+
+//                startActivity(new Intent(this, MapActivity.class));
+                Intent intent = new Intent(MainActivity.this, MapActivity.class);
                 startActivity(intent);
             }
         });
 
 
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
-        bottomNav.setSelectedItemId(R.id.nav_home);
 
-        bottomNav.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_home) {
-                // already here
-                return true;
-            } else if (id == R.id.nav_community) {
-                startActivity(new Intent(this, AllUsersActivity.class));
-                return true;
-            } else if (id == R.id.nav_profile) {
-                startActivity(new Intent(this, ProfileActivity.class));
-                return true;
-            }
-            return false;
-        });
 
 
 
@@ -277,6 +293,29 @@ public class MainActivity extends BaseActivity  {
         }
     }
 
+    private void seedInitialUsers() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Примерен placeholder URL за картинка (може и свой в Storage)
+        String placeholderUrl = "https://firebasestorage.googleapis.com/v0/b/your‑project.appspot.com/o/default_profile.png?alt=media";
+
+        // Данни за тримата
+        List<FirestoreUser> initial = List.of(
+                new FirestoreUser("admin@pixee.com", "Admin", placeholderUrl, 0,5,0,"en"),
+                new FirestoreUser("oli@pixee.com",   "Oli",   placeholderUrl, 0,5,0,"bg"),
+                new FirestoreUser("val@pixee.com",   "Val",   placeholderUrl, 0,5,0,"en")
+        );
+
+        // Записваме ги документ по документ
+        for (int i = 0; i < initial.size(); i++) {
+            String docId = String.valueOf(i+1);
+            db.collection("users")
+                    .document(docId)
+                    .set(initial.get(i))
+                    .addOnSuccessListener(aVoid -> Log.d("SEED", "User "+docId+" записан успешно"))
+                    .addOnFailureListener(e -> Log.e("SEED", "Грешка при seed на "+docId, e));
+        }
+    }
 
 
 }

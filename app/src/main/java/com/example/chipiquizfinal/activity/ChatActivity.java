@@ -1,156 +1,116 @@
 package com.example.chipiquizfinal.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.chipiquizfinal.R;
-import com.example.chipiquizfinal.adapter.ChatAdapter;
-import com.example.chipiquizfinal.AppDatabase;
-import com.example.chipiquizfinal.entity.User;
-import com.example.chipiquizfinal.models.ChatMessage;
 import com.example.chipiquizfinal.MyApplication;
+import com.example.chipiquizfinal.R;
 import com.example.chipiquizfinal.dao.UserDao;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.example.chipiquizfinal.entity.User;
+import com.google.firebase.database.*;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChatActivity extends AppCompatActivity {
+    private ListView listViewMessages;
+    private EditText messageInput;
+    private Button sendButton;
 
-    private static final String TAG = "ChatActivity";
+    private FirebaseDatabase database;
+    private DatabaseReference chatRef;
 
-    private RecyclerView chatRecyclerView;
-    private EditText editTextMessage;
-    private Button buttonSend;
-    private ChatAdapter chatAdapter;
-    private List<ChatMessage> chatMessages;
-    private DatabaseReference databaseReference;
+    private ArrayList<String> messages = new ArrayList<>();
+    private ArrayAdapter<String> adapter;
 
-    private User currentUser;
-    private String currentUserId; // Ще бъде зададен от currentUser.getId()
+    private int myUserId;
+    private int otherUserId;
+    private String chatId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        listViewMessages = findViewById(R.id.listViewMessages);
+        messageInput     = findViewById(R.id.messageInput);
+        sendButton       = findViewById(R.id.sendButton);
 
-
-        FirebaseDatabase.getInstance().getReference("test")
-                .setValue("Hello, Test!")
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d("Test", "Записът в 'test' е успешен");
-                    } else {
-                        Log.e("Test", "Грешка при запис в 'test': " + task.getException());
-                    }
-                });
-
-
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        Log.d("ChatActivity", "FirebaseDatabase instance: " + database);
-
-        // Извличане на текущия потребител от Room базата
+        // Определяме двамата потребители
         UserDao userDao = MyApplication.getDatabase().userDao();
-        // Увери се, че преди това вече е зададен логнат имейл чрез MyApplication.setLoggedEmail(…) (например при логин)
-        currentUser = userDao.getUserByEmail(MyApplication.getLoggedEmail());
-        if (currentUser != null) {
-            currentUserId = String.valueOf(currentUser.getId());
-        } else {
-            currentUserId = "unknown";
-            Log.e(TAG, "Текущият потребител не е намерен! Проверете MyApplication.getLoggedEmail()");
-        }
-
-
-        // Инициализация на UI елементите
-        chatRecyclerView = findViewById(R.id.chatRecyclerView);
-        editTextMessage = findViewById(R.id.editTextMessage);
-        buttonSend = findViewById(R.id.buttonSend);
-
-        // Инициализация на списъка със съобщения и адаптера
-        chatMessages = new ArrayList<>();
-        chatAdapter = new ChatAdapter(chatMessages, currentUserId);
-        chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        chatRecyclerView.setAdapter(chatAdapter);
-
-        // Инициализация на Firebase Database референтата към "chatMessages"
-        databaseReference = FirebaseDatabase.getInstance().getReference("chatMessages");
-        Log.d("ChatActivity", "databaseReference: " + databaseReference);
-
-        // Зареждане на съобщения от Firebase
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                chatMessages.clear();
-                for (DataSnapshot messageSnapshot : snapshot.getChildren()) {
-                    ChatMessage message = messageSnapshot.getValue(ChatMessage.class);
-                    if (message != null) {
-                        chatMessages.add(message);
-                    }
-                }
-                chatAdapter.notifyDataSetChanged();
-                chatRecyclerView.smoothScrollToPosition(chatMessages.size());
-                Log.d(TAG, "Съобщения обновени: " + chatMessages.size());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Грешка при зареждане на съобщения: " + error.getMessage());
-            }
-        });
-
-
-        // Слушател за бутона за изпращане
-        buttonSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendMessage();
-            }
-        });
-    }
-
-    /**
-     * Функция за изпращане на съобщение.
-     * Изпраща съобщението към Firebase и показва Toast при успех.
-     */
-    private void sendMessage() {
-        String messageText = editTextMessage.getText().toString().trim();
-        if (TextUtils.isEmpty(messageText)) {
-            Toast.makeText(this, "Въведи съобщение", Toast.LENGTH_SHORT).show();
+        String myEmail = MyApplication.getLoggedEmail();
+        User me = userDao.getUserByEmail(myEmail);
+        if (me == null) {
+            Toast.makeText(this, "User not found!", Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
-        // Създаване на ChatMessage обект
-        ChatMessage message = new ChatMessage(currentUserId, messageText, System.currentTimeMillis());
+        myUserId = me.getId();
+        otherUserId = getIntent().getIntExtra("chatWithUserId", -1);
+        if (otherUserId < 0) {
+            Toast.makeText(this, "Invalid chat partner!", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
-        // Изпращане на съобщението към Firebase
-        databaseReference.push().setValue(message)
-                .addOnCompleteListener(task -> {
+        // Създаваме стабилен chatId (по-малкоID_по-голямоID)
+        if (myUserId < otherUserId) {
+            chatId = myUserId + "_" + otherUserId;
+        } else {
+            chatId = otherUserId + "_" + myUserId;
+        }
 
-                    if (task.isSuccessful()) {
-                        Toast.makeText(ChatActivity.this, "Съобщението е изпратено успешно", Toast.LENGTH_SHORT).show();
-                        Log.d("ChatActivity", "Съобщението е изпратено успешно");
-                    } else {
-                        Toast.makeText(ChatActivity.this, "Грешка при изпращане", Toast.LENGTH_SHORT).show();
-                        Log.e("ChatActivity", "Грешка при изпращане: " + task.getException());
-                    }
-                });
-        editTextMessage.setText(""); // Изчистваме полето
+        // Настройваме Firebase reference
+        database = FirebaseDatabase.getInstance();
+        chatRef = database.getReference("chats").child(chatId);
+
+        // Настройваме адаптер за ListView
+        adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, messages);
+        listViewMessages.setAdapter(adapter);
+
+        // Слушаме нови съобщения
+        chatRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot snap, String prevKey) {
+                Map<String,Object> map = (Map<String,Object>) snap.getValue();
+                if (map == null) return;
+                Long senderId = (Long) map.get("senderId");
+                String text  = (String) map.get("text");
+                String display = (senderId != null && senderId == myUserId)
+                        ? "Аз: " + text
+                        : "Той/Тя: " + text;
+                messages.add(display);
+                adapter.notifyDataSetChanged();
+                listViewMessages.smoothScrollToPosition(messages.size() - 1);
+            }
+            @Override public void onChildChanged(DataSnapshot ds, String s) {}
+            @Override public void onChildRemoved(DataSnapshot ds) {}
+            @Override public void onChildMoved(DataSnapshot ds, String s) {}
+            @Override public void onCancelled(DatabaseError err) {
+                Toast.makeText(ChatActivity.this,
+                        "Chat load failed: " + err.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Изпращане на съобщение
+        sendButton.setOnClickListener(v -> {
+            String txt = messageInput.getText().toString().trim();
+            if (TextUtils.isEmpty(txt)) return;
+            Map<String,Object> msg = new HashMap<>();
+            msg.put("senderId", myUserId);
+            msg.put("text", txt);
+            chatRef.push().setValue(msg)
+                    .addOnSuccessListener(a -> messageInput.setText(""))
+                    .addOnFailureListener(e ->
+                            Toast.makeText(ChatActivity.this,
+                                    "Send failed: " + e.getMessage(),
+                                    Toast.LENGTH_SHORT).show()
+                    );
+        });
     }
-
 }

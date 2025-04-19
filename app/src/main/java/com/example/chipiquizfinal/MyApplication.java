@@ -2,6 +2,8 @@ package com.example.chipiquizfinal;
 
 import static android.content.ContentValues.TAG;
 
+import static com.example.chipiquizfinal.AppDatabase.MIGRATION_1_2;
+
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -29,6 +31,7 @@ import com.example.chipiquizfinal.entity.QuestionTranslation;
 import com.example.chipiquizfinal.entity.User;
 import com.example.chipiquizfinal.entity.UserLanguageChoice;
 import com.google.common.reflect.TypeToken;
+import com.google.firebase.FirebaseApp;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -52,16 +55,43 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // 1) Създаваме/отворяме базата
+        Log.d("APP", ">>> MyApplication.onCreate()");
+//
+//        // 1) Създаваме/отворяме базата
         db = Room.databaseBuilder(getApplicationContext(),
                         AppDatabase.class, "chipiquiz-db")
                 .fallbackToDestructiveMigration()  // или осигурете реална миграция до v2
                 .allowMainThreadQueries()
                 .build();
 
+//        db = Room.databaseBuilder(getApplicationContext(),
+//                        AppDatabase.class, "chipiquiz-db")
+//                .addMigrations(MIGRATION_1_2)
+//                .fallbackToDestructiveMigration()
+//                .allowMainThreadQueries()
+//                // ПРАВИЛНО:
+//                .addCallback(new RoomDatabase.Callback() {
+//                    @Override
+//                    public void onCreate(@NonNull SupportSQLiteDatabase db) {
+//                        super.onCreate(db);
+//                        // Тук пускаш seedQuestionsAndAnswers() или каквото ти трябва
+//                        Executors.newSingleThreadExecutor().execute(() -> {
+//                            seedQuestionsAndAnswers();
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void onOpen(@NonNull SupportSQLiteDatabase db) {
+//                        super.onOpen(db);
+//                        // при нужда – логика за open
+//                    }
+//                })
+//                .build();
 
-        db.getOpenHelper().getWritableDatabase();
+
+
+
+//        db.getOpenHelper().getWritableDatabase();
 
         // 2) Директно викаме seed, но той вътре ще провери дали вече има въпроси
         seedQuestionsAndAnswers();
@@ -71,6 +101,7 @@ public class MyApplication extends Application {
 
         seedDefaultUsers();
 //        userDao = MyApplication.getDatabase().userDao();
+//        replenishLives(userDao);
 
     }
 
@@ -285,4 +316,25 @@ public class MyApplication extends Application {
         choice.setDailyPractice(dailyPractice);
         choiceDao.insert(choice);
     }
+
+    public static void replenishLives(UserDao userDao, User u) {
+        final int MAX_LIVES = 5;
+        long now = System.currentTimeMillis();
+        long last = u.getLastLifeTimestamp();
+        if (last == 0) {
+            // инициализираме първоначално
+            u.setLastLifeTimestamp(now);
+            userDao.update(u);
+            return;
+        }
+        long hoursPassed = (now - last) / (1000 * 60 * 60);
+        if (hoursPassed > 0) {
+            int newLives = Math.min(MAX_LIVES, u.getLives() + (int)hoursPassed);
+            long newTimestamp = last + hoursPassed * (1000 * 60 * 60);
+            u.setLives(newLives);
+            u.setLastLifeTimestamp(newTimestamp);
+            userDao.update(u);
+        }
+    }
+
 }

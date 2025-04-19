@@ -1,5 +1,8 @@
-package com.example.chipiquizfinal.activity;
+package com.example.chipiquizfinal.adapter;
 
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +15,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.chipiquizfinal.R;
+import com.example.chipiquizfinal.activity.ProfileViewActivity;
 import com.example.chipiquizfinal.dao.FriendshipDao;
 import com.example.chipiquizfinal.entity.Friendship;
 import com.example.chipiquizfinal.entity.User;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
-
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.VH> {
 
     private List<User> items;
@@ -32,14 +34,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.VH> {
         this.friendshipDao = friendshipDao;
     }
 
-    public void setItems(List<User> users) {
-        this.items = users;
-        notifyDataSetChanged();
-    }
-
-    @NonNull
     @Override
-    public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public @NonNull VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_user_list, parent, false);
         return new VH(view);
@@ -48,85 +44,96 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.VH> {
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
         User user = items.get(position);
+        Context ctx = holder.itemView.getContext();  // правилният Context
 
-        // Username
+        // 1) Зареждаме username и avatar
         holder.username.setText(user.getUsername());
-
-        // Avatar
         String path = user.getProfileImagePath();
-        if (path != null && !path.isEmpty()) {
-            File imgFile = new File(path);
-            if (imgFile.exists()) {
-                Glide.with(holder.avatar.getContext())
-                        .load(imgFile)
-                        .circleCrop()
-                        .placeholder(R.drawable.ic_profile_placeholder)
-                        .error(R.drawable.ic_profile_placeholder)
-                        .into(holder.avatar);
-            } else {
-                holder.avatar.setImageResource(R.drawable.ic_profile_placeholder);
-            }
+        if (path != null && new File(path).exists()) {
+            Glide.with(ctx)
+                    .load(new File(path))
+                    .circleCrop()
+                    .placeholder(R.drawable.ic_profile_placeholder)
+                    .into(holder.avatar);
         } else {
             holder.avatar.setImageResource(R.drawable.ic_profile_placeholder);
         }
 
-        // Friendship status
-        List<Friendship> outgoing = friendshipDao.getOutgoing(currentUserId);
-        List<Friendship> incoming = friendshipDao.getIncomingRequests(currentUserId);
+        // 2) Настройваме View Profile
+        holder.profView.setVisibility(View.VISIBLE);
+        holder.profView.setOnClickListener(v -> {
+            // Създаваме Intent с правилния Context
+            Intent intent = new Intent(ctx, ProfileViewActivity.class);
+            // Пращаме userId като int
+            intent.putExtra("userId", user.getId());
+            ctx.startActivity(intent);
+        });
 
-        Friendship outgoingRel = null;
-        for (Friendship f : outgoing) {
-            if (f.getFriendId() == user.getId()) {
-                outgoingRel = f;
-                break;
-            }
-        }
 
-        Friendship incomingRel = incoming.stream().filter(f -> f.getUserId() == user.getId()).findFirst().orElse(null);
+        // 3) Логика за friendship бутон (добави/одобри/изчаква/приятели)
+        Friendship fOut = friendshipDao.getFriendship(currentUserId, user.getId());
+        Friendship fIn  = friendshipDao.getFriendship(user.getId(), currentUserId);
 
-        // Configure button
-        if (outgoingRel != null && "ACCEPTED".equals(outgoingRel.status)) {
-            holder.btn.setText("Приятели");
-            holder.btn.setEnabled(false);
-
-        } else if (incomingRel != null && "PENDING".equals(incomingRel.status)) {
+        if (fIn != null && "PENDING".equals(fIn.getStatus())) {
+            holder.btn.setVisibility(View.VISIBLE);
             holder.btn.setText("Одобри");
             holder.btn.setEnabled(true);
             holder.btn.setOnClickListener(v -> {
-                incomingRel.status = "ACCEPTED";
-                friendshipDao.update(incomingRel);
+                fIn.setStatus("ACCEPTED");
+                friendshipDao.update(fIn);
                 notifyItemChanged(position);
             });
 
+        } else if (fOut != null && "PENDING".equals(fOut.getStatus())) {
+            holder.btn.setVisibility(View.VISIBLE);
+            holder.btn.setText("Изчаква...");
+            holder.btn.setEnabled(false);
+
+        } else if ((fIn != null && "ACCEPTED".equals(fIn.getStatus()))
+                || (fOut != null && "ACCEPTED".equals(fOut.getStatus()))) {
+            holder.btn.setVisibility(View.VISIBLE);
+            holder.btn.setText("Приятели");
+            holder.btn.setEnabled(false);
+
         } else {
+            holder.btn.setVisibility(View.VISIBLE);
             holder.btn.setText("Добави приятел");
             holder.btn.setEnabled(true);
             holder.btn.setOnClickListener(v -> {
-                Friendship f = new Friendship();
-                f.setUserId(currentUserId);
-                f.setFriendId(user.getId());
-                f.status = "PENDING";
-                friendshipDao.insert(f);
+                Friendship newF = new Friendship();
+                newF.setUserId(currentUserId);
+                newF.setFriendId(user.getId());
+                newF.setStatus("PENDING");
+                friendshipDao.insert(newF);
                 notifyItemChanged(position);
             });
         }
     }
+
+
 
     @Override
     public int getItemCount() {
         return items.size();
     }
 
+    public void setItems(List<User> users) {
+        this.items = users;
+        notifyDataSetChanged();
+    }
+
     static class VH extends RecyclerView.ViewHolder {
         ImageView avatar;
-        TextView username;
+        TextView username, profView;
         Button btn;
 
-        VH(@NonNull View itemView) {
-            super(itemView);
-            avatar = itemView.findViewById(R.id.itemAvatar);
-            username = itemView.findViewById(R.id.itemUsername);
-            btn = itemView.findViewById(R.id.itemBtn);
+        VH(@NonNull View iv) {
+            super(iv);
+            avatar   = iv.findViewById(R.id.itemAvatar);
+            username = iv.findViewById(R.id.itemUsername);
+            btn      = iv.findViewById(R.id.itemBtn);
+            profView = iv.findViewById(R.id.viewProf);
         }
     }
 }
+

@@ -17,8 +17,11 @@ import com.example.chipiquizfinal.R;
 import com.example.chipiquizfinal.dao.ProgrammingLanguageDao;
 import com.example.chipiquizfinal.entity.ProgrammingLanguage;
 import com.example.chipiquizfinal.entity.User;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class BaseActivity extends AppCompatActivity {
     private static final String PREFS_NAME      = "prefs";
@@ -34,6 +37,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         // setupHeader() да се извика в наследниците след setContentView()
     }
 
@@ -110,4 +115,45 @@ public abstract class BaseActivity extends AppCompatActivity {
         // Обновяваме статистиката при връщане на преден план
         refreshHeaderStats();
     }
+
+    public void loadCurrentUser(String email, Consumer<User> onLoaded, Consumer<String> onError) {
+        User local = MyApplication.getDatabase().userDao().getUserByEmail(email);
+        if (local != null) {
+            onLoaded.accept(local);
+        } else {
+            // няма го локално, да го дръпнем от Firestore
+            FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .whereEqualTo("email", email)
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener(qs -> {
+                        if (!qs.isEmpty()) {
+                            // в BaseActivity.loadCurrentUser, в onSuccessListener:
+                            DocumentSnapshot doc = qs.getDocuments().get(0);
+// …
+                            User u = new User();
+                            u.setId(Integer.parseInt(doc.getId()));
+                            u.setEmail(doc.getString("email"));
+                            u.setUsername(doc.getString("username"));
+                            u.setPassword(doc.getString("password"));    // ако пазиш паролата
+                            u.setFirstName(doc.getString("firstName"));  // ← ново
+                            u.setLastName(doc.getString("lastName"));    // ← ново
+                            u.setLanguage(doc.getString("language"));    // ← ново
+                            u.setPoints(doc.getLong("points").intValue());
+                            u.setLives(doc.getLong("lives").intValue());
+                            u.setConsecutiveDays(doc.getLong("streak").intValue());
+                            u.setSelectedLanguageCode(doc.getString("selectedLanguage"));
+                            u.setProfileImagePath(doc.getString("profileImageUrl"));
+// …
+                            MyApplication.getDatabase().userDao().insert(u);
+                            onLoaded.accept(u);
+                        } else {
+                            onError.accept("User not found in cloud");
+                        }
+                    })
+                    .addOnFailureListener(e -> onError.accept(e.getMessage()));
+        }
+    }
+
 }

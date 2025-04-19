@@ -9,6 +9,8 @@ constraintlayoutVersion = "2.1.1"
 core = "1.17.1"
 espressoCoreVersion = "3.4.0"
 githubSceneview = "1.1.0"
+googleServices = "4.4.2"
+gradle = "8.0.2"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -37,6 +39,8 @@ constraintlayout-v211 = { module = "androidx.constraintlayout:constraintlayout",
 core = { module = "com.google.ar.sceneform:core", version.ref = "core" }
 espresso-core-v340 = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCoreVersion" }
 github-sceneview = { module = "io.github.SceneView:sceneview", version.ref = "sceneviewVersion" }
+google-services = { module = "com.google.gms:google-services", version.ref = "googleServices" }
+gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

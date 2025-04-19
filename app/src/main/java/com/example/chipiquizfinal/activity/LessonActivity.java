@@ -2,6 +2,7 @@ package com.example.chipiquizfinal.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -21,6 +22,7 @@ import com.example.chipiquizfinal.entity.Question;
 import com.example.chipiquizfinal.entity.QuestionAnswerOption;
 import com.example.chipiquizfinal.entity.QuestionTranslation;
 import com.example.chipiquizfinal.entity.User;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Collections;
 import java.util.List;
@@ -75,7 +77,8 @@ public class LessonActivity extends BaseActivity {
             finish();
             return;
         }
-
+//        MyApplication.replenishLives(userDao, currentUser);
+        refreshHeaderStats();
         // 4) Зареждаме въпросите
         questionList = questionDao.getQuestionsByExerciseId(exerciseId);
         if (questionList == null || questionList.isEmpty()) {
@@ -138,36 +141,59 @@ public class LessonActivity extends BaseActivity {
     }
 
     private void checkAnswer(@NonNull QuestionAnswerOption selected) {
-        Question q = questionList.get(currentQuestionIndex);
-        Integer correctId = q.getCorrectAnswerOptionId();
-        boolean isCorrect = (correctId != null && selected.getId() == correctId);
+        Question question = questionList.get(currentQuestionIndex);
+        boolean correct = selected.getId() == question.getCorrectAnswerOptionId();
 
         new AlertDialog.Builder(this)
-                .setTitle(isCorrect ? "✅ Вярно!" : "❌ Грешно!")
-                .setMessage(isCorrect ? "Поздравления!" : "Опитай пак.")
-                .setCancelable(false)
-                .setPositiveButton("OK", (d, w) -> {
-                    if (isCorrect) {
+                .setTitle(correct ? "✅ Вярно!" : "❌ Грешно!")
+                .setPositiveButton("OK", (dialog, which) -> {
+                    if (correct) {
                         currentQuestionIndex++;
                         displayQuestion();
                     } else {
+                        // Намаляваме живот
                         int lives = currentUser.getLives();
                         if (lives > 0) {
                             currentUser.setLives(lives - 1);
+                            // Обновяваме timestamp, за да почне часовникът за дозареждане
+                            currentUser.setLastLifeTimestamp(System.currentTimeMillis());
                             userDao.update(currentUser);
-                            // обновяваме header-а веднага
+                            updateLivesInCloud(currentUser);
                             refreshHeaderStats();
                         }
-                        Toast.makeText(this,
-                                "Оставащи животи: " + currentUser.getLives(),
-                                Toast.LENGTH_SHORT).show();
+                        if (currentUser.getLives() == 0) {
+                            // Няма животи – прекъсваме
+                            Toast.makeText(this,
+                                    "Нямате повече животи – упражнението се прекъсва.",
+                                    Toast.LENGTH_LONG).show();
+                            finish();
+                        } else {
+                            Toast.makeText(this,
+                                    "Оставащи животи: " + currentUser.getLives(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }).show();
+                })
+                .setCancelable(false)
+                .show();
     }
 
     private void completeExercise() {
         // добавяме прогрес, точки и се връщаме
         // ... същата логика като преди ...
         finish();
+    }
+
+    // helper за обновяване в Firestore
+    private void updateLivesInCloud(User user) {
+        String docId = String.valueOf(user.getId());
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(docId)
+                .update(
+                        "lives", user.getLives(),
+                        "lastLifeTimestamp", user.getLastLifeTimestamp()
+                )
+                .addOnFailureListener(e -> Log.e("Firestore", "Неуспешен ъпдейт на lives: " + e.getMessage()));
     }
 }

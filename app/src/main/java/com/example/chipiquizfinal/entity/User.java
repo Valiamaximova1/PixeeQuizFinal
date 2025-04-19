@@ -43,6 +43,9 @@ public class User {
     @ColumnInfo(name = "profile_image_uri")
     private String profileImagePath;
 
+    @ColumnInfo(name = "last_life_timestamp")
+    private long lastLifeTimestamp;
+
     public User() {}
 
     public String getRole() {
@@ -171,5 +174,13 @@ public class User {
     @Nullable
     public void setProfileImagePath(String profileImagePath) {
         this.profileImagePath = profileImagePath;
+    }
+
+    public long getLastLifeTimestamp() {
+        return lastLifeTimestamp;
+    }
+
+    public void setLastLifeTimestamp(long lastLifeTimestamp) {
+        this.lastLifeTimestamp = lastLifeTimestamp;
     }
 }
