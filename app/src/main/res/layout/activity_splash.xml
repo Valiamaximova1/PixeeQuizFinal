@@ -7,15 +7,23 @@
     android:layout_height="match_parent"
     android:background="@color/primary">
 
-    <ImageView
-        android:id="@+id/logoImage"
-        android:layout_width="357dp"
-        android:layout_height="383dp"
-        android:contentDescription="Logo"
-        android:src="@drawable/pixee"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/gifView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/log"
+        tools:ignore="MissingConstraints" />
+<!--    <ImageView-->
+<!--        android:id="@+id/logoImage"-->
+<!--        android:layout_width="357dp"-->
+<!--        android:layout_height="383dp"-->
+<!--        android:contentDescription="Logo"-->
+<!--        android:src="@drawable/pixee"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

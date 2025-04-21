@@ -82,6 +82,8 @@ dependencies {
     // JSON
     implementation "com.google.code.gson:gson:2.9.1"
 
+    //Gif
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.23'
     // Testing
     testImplementation "junit:junit:4.13.2"
     androidTestImplementation "androidx.test.ext:junit:1.1.3"
