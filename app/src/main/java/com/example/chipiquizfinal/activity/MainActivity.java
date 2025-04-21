@@ -66,12 +66,6 @@ public class MainActivity extends BaseActivity  {
         ExerciseDao exerciseDao = MyApplication.getDatabase().exerciseDao();
 
 
-        // в onCreate(...)
-        Button scanQrBtn = findViewById(R.id.scanQrBtn);
-        scanQrBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(this, QRScannerActivity.class);
-            startActivity(intent);
-        });
 
 
         // 2. Вземаме текущия потребител по имейл
@@ -129,16 +123,16 @@ public class MainActivity extends BaseActivity  {
 
 
 
-        Button buttonOpenChat = findViewById(R.id.buttonOpenChat);
-        buttonOpenChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-//                startActivity(new Intent(this, MapActivity.class));
-                Intent intent = new Intent(MainActivity.this, MapActivity.class);
-                startActivity(intent);
-            }
-        });
+//        Button buttonOpenChat = findViewById(R.id.buttonOpenChat);
+//        buttonOpenChat.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+////                startActivity(new Intent(this, MapActivity.class));
+//                Intent intent = new Intent(MainActivity.this, MapActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
 
 

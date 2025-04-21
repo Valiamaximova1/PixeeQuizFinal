@@ -94,6 +94,12 @@ public class ProfileActivity extends BaseActivity {
 
         });
 
+        // в onCreate(...)
+        Button scanQrBtn = findViewById(R.id.scanQrBtn);
+        scanQrBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, QRScannerActivity.class);
+            startActivity(intent);
+        });
 
 
 

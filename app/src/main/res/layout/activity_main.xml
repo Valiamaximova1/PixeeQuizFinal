@@ -36,32 +36,32 @@
     </ScrollView>
 
     <!-- Бутон за чат -->
-    <Button
-        android:id="@+id/buttonOpenChat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Чат"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="60dp"
-        android:background="@drawable/rounded_button_primary"
-        android:textColor="@android:color/white"
-        android:padding="10dp"
-        android:textAllCaps="false"
-        android:textSize="16sp"/>
+<!--    <Button-->
+<!--        android:id="@+id/buttonOpenChat"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Чат"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_margin="60dp"-->
+<!--        android:background="@drawable/rounded_button_primary"-->
+<!--        android:textColor="@android:color/white"-->
+<!--        android:padding="10dp"-->
+<!--        android:textAllCaps="false"-->
+<!--        android:textSize="16sp"/>-->
 
-    <!-- Бутон за сканиране на QR -->
-    <Button
-        android:id="@+id/scanQrBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Scan"
-        android:layout_alignParentStart="true"
-        android:layout_margin="60dp"
-        android:background="@drawable/rounded_button_primary"
-        android:textColor="@android:color/white"
-        android:padding="10dp"
-        android:textAllCaps="false"
-        android:textSize="16sp"/>
+<!--    &lt;!&ndash; Бутон за сканиране на QR &ndash;&gt;-->
+<!--    <Button-->
+<!--        android:id="@+id/scanQrBtn"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Scan"-->
+<!--        android:layout_alignParentStart="true"-->
+<!--        android:layout_margin="60dp"-->
+<!--        android:background="@drawable/rounded_button_primary"-->
+<!--        android:textColor="@android:color/white"-->
+<!--        android:padding="10dp"-->
+<!--        android:textAllCaps="false"-->
+<!--        android:textSize="16sp"/>-->
 
     <!-- Долно меню -->
     <com.google.android.material.bottomnavigation.BottomNavigationView

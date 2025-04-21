@@ -54,12 +54,18 @@
             android:layout_marginEnd="12dp"
             android:text="0"/>
 
-        <ImageButton
-            android:id="@+id/changeLanguageBtn"
+        <ImageButton android:id="@+id/changeLanguageBtn"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/language"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@drawable/language"
             android:contentDescription="@string/change_language"/>
+
+<!--        <ImageButton-->
+<!--            android:id="@+id/changeLanguageBtn"-->
+<!--            android:layout_width="24dp"-->
+<!--            android:layout_height="24dp"-->
+<!--            android:src="@drawable/language"-->
+<!--            android:background="?attr/selectableItemBackgroundBorderless"-->
+<!--            android:contentDescription="@string/change_language"/>-->
     </LinearLayout>
 </LinearLayout>

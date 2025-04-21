@@ -54,13 +54,14 @@
     <string name="exercise_complete">Exercise completed! +10 points</string>
     <string name="no_questions">No questions for this exercise.</string>
     <string name="change_language">Choose language</string>
-    <string name="search_users_hint">Търси...</string>
-    <string name="add_friend">Добави приятел</string>
-    <string name="profile_image">Снимка</string>
-    <string name="nav_community">Общност</string>
-    <string name="viewProf">Виж профил</string>
-    <string name="accept">Одобри</string>
-    <string name="map">Карта</string>
+    <string name="search_users_hint">Search...</string>
+    <string name="add_friend">Add friend</string>
+    <string name="profile_image">Photo</string>
+    <string name="nav_community">Community</string>
+    <string name="viewProf">Profile</string>
+    <string name="accept">Accept</string>
+    <string name="map">Map</string>
+    <string name="qr">Scan QR code</string>
 
     <!--    &lt;!&ndash; Language Dialog &ndash;&gt;-->
 <!--    <string name="select_language_dialog">Select Language</string>-->

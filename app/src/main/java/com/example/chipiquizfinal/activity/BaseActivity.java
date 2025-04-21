@@ -26,6 +26,7 @@ import com.example.chipiquizfinal.dao.UserLanguageChoiceDao;
 import com.example.chipiquizfinal.entity.ProgrammingLanguage;
 import com.example.chipiquizfinal.entity.User;
 import com.example.chipiquizfinal.entity.UserLanguageChoice;
+import com.example.chipiquizfinal.helper.LocaleHelper;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -38,8 +39,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class BaseActivity extends AppCompatActivity {
-    private static final String PREFS_NAME      = "prefs";
-    private static final String KEY_LANG        = "lang";
+    protected static final String PREFS_NAME = "user_prefs";
+    protected static final String KEY_LANG   = "language";
     private static final String KEY_PATH_NAME   = "path_name";
 
     protected Spinner     languageSwitcher;
@@ -62,10 +63,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         livesCount         = findViewById(R.id.livesCount);
         changeLanguageBtn  = findViewById(R.id.changeLanguageBtn);
 
-        // Зареждаме статистиката на текущия потребител
         refreshHeaderStats();
 
-        // Настройваме spinner за избор на пътека
         ProgrammingLanguageDao langDao = MyApplication.getDatabase().programmingLanguageDao();
         List<ProgrammingLanguage> langs = langDao.getAllLanguages();
         ArrayAdapter<ProgrammingLanguage> adapter = new ArrayAdapter<>(
@@ -87,22 +86,29 @@ public abstract class BaseActivity extends AppCompatActivity {
         languageSwitcher.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String name = langs.get(position).getName();
-                prefs.edit().putString(KEY_PATH_NAME, name).apply();
-                // TODO: обнови UI/въпросите според новия избор
+                prefs.edit()
+                        .putString(KEY_PATH_NAME, langs.get(position).getName())
+                        .apply();
+
             }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
+            @Override public void onNothingSelected(AdapterView<?> parent) { }
         });
 
-        // Бутон за смяна на интерфейсен език
         changeLanguageBtn.setOnClickListener(v -> {
-            String cur = prefs.getString(KEY_LANG, "en");
+            String cur  = prefs.getString(KEY_LANG, "en");
             String next = cur.equals("en") ? "bg" : "en";
             prefs.edit().putString(KEY_LANG, next).apply();
             recreate();
         });
     }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        SharedPreferences prefs = newBase.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String lang = prefs.getString(KEY_LANG, "en");
+        super.attachBaseContext(LocaleHelper.wrap(newBase, lang));
+    }
+
 
     protected void refreshHeaderStats() {
         User me = MyApplication.getDatabase()
