@@ -2,7 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="primary">#4A90E2</color>          <!-- Ярко синьо: основен цвят -->
+    <color name="primary">#89C3EA</color>
+    <color name="lineGray">#DDDDDD</color>
     <color name="purple">#8e44ad</color>          <!-- Ярко синьо: основен цвят -->
     <color name="primary_dark">#357ABD</color>     <!-- Тъмно синьо за заглавия и акценти -->
     <color name="accent">#50E3C2</color>           <!-- Ментово зелено: за бутони и активни елементи -->

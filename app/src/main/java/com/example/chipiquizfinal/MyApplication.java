@@ -163,16 +163,7 @@ public class MyApplication extends Application {
                     "admin","1234","Admin","Pixee","Admin","admin","Java");
             insertUserLanguageChoice(choiceDao, langDao, id, "Java", 1, 10);
         }
-        if (userDao.getUserByEmail("oli") == null) {
-            long id = insertUser(userDao,
-                    "oli","1234","Olimpia","Olimpia","Maximova","user","Java");
-            insertUserLanguageChoice(choiceDao, langDao, id, "Java", 1, 10);
-        }
-        if (userDao.getUserByEmail("val") == null) {
-            long id = insertUser(userDao,
-                    "val","1234","Val","Valentina","Maximova","user","Java");
-            insertUserLanguageChoice(choiceDao, langDao, id, "Java", 1, 10);
-        }
+
     }
     private long insertUser(UserDao uDao, String email, String pwd,
                             String username, String first, String last,

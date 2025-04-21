@@ -27,7 +27,7 @@
     <!-- Бутон за добавка/одобрение -->
     <Button
         android:id="@+id/itemBtn"
-        android:layout_width="83dp"
+        android:layout_width="90dp"
         android:layout_height="wrap_content"
         android:layout_marginRight="5dp"
         android:layout_marginLeft="10dp"

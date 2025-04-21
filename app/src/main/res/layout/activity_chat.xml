@@ -8,14 +8,20 @@
     android:background="@color/white">
 
     <!-- Списък със съобщения -->
-    <ListView
-        android:id="@+id/listViewMessages"
+<!--    <ListView-->
+<!--        android:id="@+id/listViewMessages"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_weight="1"-->
+<!--        android:divider="@null"-->
+<!--        android:footerDividersEnabled="false"-->
+<!--        android:paddingBottom="4dp"/>-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerChat"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:divider="@null"
-        android:footerDividersEnabled="false"
-        android:paddingBottom="4dp"/>
+        android:padding="8dp"/>
 
     <!-- Поле за въвеждане и бутон Изпрати -->
     <LinearLayout

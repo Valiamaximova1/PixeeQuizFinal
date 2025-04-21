@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="8dp">
+
+    <!-- 1) Вертикалната линия (конектор нагоре/надолу) -->
+    <View
+        android:id="@+id/connectorVertical"
+        android:layout_width="2dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@color/lineGray" />
+
+    <LinearLayout
+        android:id="@+id/lessonRowInner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- 2) Ако е четен ред: кръгче -> хоризонтален конектор -->
+        <FrameLayout
+            android:id="@+id/lessonBubbleContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:id="@+id/connectorHorizontal"
+            android:layout_width="24dp"
+            android:layout_height="2dp"
+            android:background="@color/lineGray"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/characterIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/logg"
+            android:contentDescription="Progress icon" />
+    </LinearLayout>
+</FrameLayout>

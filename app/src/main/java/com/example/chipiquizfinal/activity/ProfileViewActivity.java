@@ -1,5 +1,6 @@
 package com.example.chipiquizfinal.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,10 +18,11 @@ import com.example.chipiquizfinal.dao.FriendshipDao;
 import com.example.chipiquizfinal.dao.UserDao;
 import com.example.chipiquizfinal.entity.Friendship;
 import com.example.chipiquizfinal.entity.User;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class ProfileViewActivity extends AppCompatActivity {
+public class ProfileViewActivity extends BaseActivity {
     private ImageView profileImageView;
     private TextView usernameTextView, emailTextView;
     private TextView pointsTextView, livesTextView, streakTextView;
@@ -40,6 +42,7 @@ public class ProfileViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_view);
 
+        setupHeader();
         profileImageView  = findViewById(R.id.profileImageView);
         usernameTextView  = findViewById(R.id.usernameTextView);
         emailTextView     = findViewById(R.id.emailTextView);
@@ -74,8 +77,31 @@ public class ProfileViewActivity extends AppCompatActivity {
         }
         loadUserProfile();
         setupFriendButton();
+
+
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
+        bottomNav.setSelectedItemId(R.id.nav_community);
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_home) {
+                startActivity(new Intent(this, MainActivity.class));
+                return true;
+            } else if (id == R.id.nav_profile) {
+                startActivity(new Intent(this, ProfileActivity.class));
+                return true;
+            } else if (id == R.id.nav_community) {
+                startActivity(new Intent(this, AllUsersActivity.class));
+                return true;
+            }else if (id == R.id.nav_map) {
+                startActivity(new Intent(this, MainActivity.class));
+                return true;
+            }
+            return true;
+        });
+
     }
 
+    @SuppressLint("SetTextI18n")
     private void loadUserProfile() {
         firestore.collection("users")
                 .document(String.valueOf(viewedUserId))
@@ -95,9 +121,9 @@ public class ProfileViewActivity extends AppCompatActivity {
 
                     usernameTextView.setText(username != null ? username : "");
                     emailTextView   .setText(email    != null ? email    : "");
-                    pointsTextView  .setText("Points: " + (points != null ? points : 0));
-                    livesTextView   .setText("Lives: "  + (lives  != null ? lives  : 0));
-                    streakTextView  .setText("Streak: " + (streak != null ? streak : 0));
+                    pointsTextView  .setText(" " + (points != null ? points : 0));
+                    livesTextView   .setText(" "  + (lives  != null ? lives  : 0));
+                    streakTextView  .setText(" " + (streak != null ? streak : 0));
 
                     if (imgUrl != null && !imgUrl.isEmpty()) {
                         Glide.with(this)

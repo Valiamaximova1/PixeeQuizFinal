@@ -1,80 +1,225 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="@color/white">
+    android:background="@color/white"
+    tools:context=".activity.MainActivity">
+
+    <include
+        android:id="@+id/headerInclude"
+        layout="@layout/header_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+
+<ScrollView   xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="40dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:padding="16dp"
         android:gravity="center_horizontal">
 
-        <!-- Профилна снимка -->
-        <ImageView
-            android:id="@+id/profileImageView"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/ic_profile_placeholder"
-            android:scaleType="centerCrop"
-            android:layout_marginBottom="16dp"
-            android:contentDescription="Profile Image"/>
+        <!-- Карта с профилна снимка и фонова трептяща икона -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="4dp"
+            android:foreground="?attr/selectableItemBackground">
 
-        <!-- Потребителско име -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- Фонов градиент или снимка -->
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:alpha="0.2"
+                    android:src="@drawable/pixee"/>
+
+                <!-- Кръгла профилна снимка -->
+                <ImageView
+                    android:id="@+id/profileImageView"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_profile_placeholder"
+                    android:background="@drawable/circle_white_bg"
+                    android:padding="4dp"/>
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Име и email -->
         <TextView
             android:id="@+id/usernameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="Username"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
+            android:textColor="@color/black"/>
 
-        <!-- Email -->
         <TextView
             android:id="@+id/emailTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="email@example.com"
-            android:layout_marginBottom="8dp"/>
+            android:textSize="14sp"
+            android:textColor="@color/lineGray"
+            android:layout_marginBottom="24dp"/>
 
-        <!-- Статистики -->
-        <TextView
-            android:id="@+id/pointsTextView"
-            android:layout_width="wrap_content"
+        <!-- Статистики във взаимосвързан card layout -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Points: 0"
-            android:layout_marginBottom="4dp"/>
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            android:padding="12dp"
+            android:layout_marginBottom="24dp">
 
-        <TextView
-            android:id="@+id/livesTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Lives: 5"
-            android:layout_marginBottom="4dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:weightSum="3">
 
-        <TextView
-            android:id="@+id/streakTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Streak: 0"
-            android:layout_marginBottom="16dp"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="10dp"
+                    android:orientation="vertical"
+                    android:gravity="center">
 
-        <!-- Бутон за добавяне/приемане на приятелство -->
-        <Button
+                    <TextView
+                        android:text="Points"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="3dp"
+                        android:textSize="12sp"
+                        android:textColor="@color/purple_dark"/>
+                    <TextView
+                        android:id="@+id/pointsTextView"
+                        android:text="0"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="40dp"
+                    android:background="@color/purple_dark"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="10dp"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:text="Lives"
+                        android:textSize="12sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:textColor="@color/purple_dark"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:id="@+id/livesTextView"
+                        android:text="5"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="40dp"
+                    android:background="@color/lineGray"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="10dp"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:text="Streak"
+                        android:textSize="12sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/purple_dark"/>
+                    <TextView
+                        android:id="@+id/streakTextView"
+                        android:text="0"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Бутоните с иконки и оцветяване по Material Design -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddFriend"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/rounded_button_shadow"
             android:text="Добави приятел"
-            android:layout_marginTop="24dp"/>
 
-        <Button
+            app:iconGravity="textStart"
+            android:layout_marginBottom="12dp"/>
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnChat"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
+            android:background="@drawable/rounded_button_shadow"
             android:layout_height="wrap_content"
             android:text="Чат"
-            android:visibility="gone"
-            android:layout_marginTop="8dp"/>
+            app:iconGravity="textStart"/>
+
     </LinearLayout>
 </ScrollView>
+
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/rounded_top_nav_background"
+        android:elevation="10dp"
+        app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/nav_item_color_selector"
+        app:itemTextColor="@color/nav_item_color_selector"
+        app:labelVisibilityMode="labeled" />
+
+</RelativeLayout>

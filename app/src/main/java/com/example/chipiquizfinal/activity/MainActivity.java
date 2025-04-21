@@ -1,9 +1,11 @@
 package com.example.chipiquizfinal.activity;
 
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.widget.*;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.example.chipiquizfinal.MyApplication;
 import com.example.chipiquizfinal.R;
@@ -175,6 +178,7 @@ public class MainActivity extends BaseActivity  {
         }
     }
 
+
     private void loadLessonPathZigzag(List<Exercise> exercises, int userProgress) {
         LinearLayout container = findViewById(R.id.lessonPathContainer);
         container.removeAllViews();
@@ -193,6 +197,8 @@ public class MainActivity extends BaseActivity  {
                 levelTitle.setPadding(0, 40, 0, 16);
                 levelTitle.setGravity(Gravity.CENTER_HORIZONTAL);
                 lessonPathContainer.addView(levelTitle);
+                Typeface tf = ResourcesCompat.getFont(this, R.font.underdog);
+                levelTitle.setTypeface(tf);
             }
 
 //            // 🐿️ Добавяме логото само веднъж след 6-тия
@@ -210,6 +216,7 @@ public class MainActivity extends BaseActivity  {
             // 🎯 Добавяне на самото балонче
             View rowView = getLayoutInflater().inflate(R.layout.item_lesson_row, lessonPathContainer, false);
             ImageView characterIcon = rowView.findViewById(R.id.characterIcon);
+            ImageView characterIcon1 = rowView.findViewById(R.id.characterIcon1);
             FrameLayout lessonContainer = rowView.findViewById(R.id.lessonBubbleContainer);
 
             View lessonView = getLayoutInflater().inflate(R.layout.item_lesson, lessonContainer, false);
@@ -246,7 +253,7 @@ public class MainActivity extends BaseActivity  {
                 layout.addView(lessonContainer);
                 layout.addView(characterIcon);
             } else {
-                layout.addView(characterIcon);
+                layout.addView(characterIcon1);
                 layout.addView(lessonContainer);
             }
 
