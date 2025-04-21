@@ -23,25 +23,18 @@ import androidx.room.PrimaryKey;
         }
 )
 public class Question {
-
     @PrimaryKey(autoGenerate = true)
     private int id;
-
     @ColumnInfo(name = "question_text")
     private String questionText;
-
     @ColumnInfo(name = "question_type")
-    private String questionType; // "choice", "input", "ar"
-
+    private String questionType;
     @ColumnInfo(name = "model_path")
     private String modelPath;
-
     @ColumnInfo(name = "language_id")
     private int languageId;
-
     @ColumnInfo(name = "level")
     private int level;
-
     @ColumnInfo(name = "exercise_id")
     private int exerciseId;
 

@@ -38,8 +38,6 @@ public class UserLanguageChoice {
     @ColumnInfo(name = "daily_practice")
     private int dailyPractice;
 
-    // Гетъри и сетъри
-
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

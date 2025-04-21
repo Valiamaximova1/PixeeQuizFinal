@@ -35,11 +35,9 @@ public class AllUsersActivity extends BaseActivity {
         setContentView(R.layout.activity_all_users);
         setupHeader();
 
-        // 1. Инициализираме DAO-тата
         userDao       = MyApplication.getDatabase().userDao();
         friendshipDao = MyApplication.getDatabase().friendshipDao();
 
-        // 2. Опитваме да вземем имейла на текущия потребител
         String email = MyApplication.getLoggedEmail();
         if (email == null) {
             SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
@@ -51,7 +49,6 @@ public class AllUsersActivity extends BaseActivity {
             return;
         }
 
-        // 3. Зареждаме User-а от базата
         User me = userDao.getUserByEmail(email);
         if (me == null) {
             Toast.makeText(this, "Потребителят не е намерен!", Toast.LENGTH_SHORT).show();
@@ -60,13 +57,11 @@ public class AllUsersActivity extends BaseActivity {
         }
         currentUserId = me.getId();
 
-        // 4. Настройка на RecyclerView
         recyclerUsers = findViewById(R.id.recyclerUsers);
         recyclerUsers.setLayoutManager(new LinearLayoutManager(this));
         adapter = new UserAdapter(List.of(), currentUserId, friendshipDao);
         recyclerUsers.setAdapter(adapter);
 
-        // 5. Настройка на SearchView
         searchView = findViewById(R.id.searchView);
         searchView.setQueryHint(getString(R.string.search_users_hint));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -80,9 +75,7 @@ public class AllUsersActivity extends BaseActivity {
             }
         });
 
-        // 6. Долно навигационно меню
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
-        // маркираме текущия таб
         bottomNav.setSelectedItemId(R.id.nav_community);
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -90,7 +83,6 @@ public class AllUsersActivity extends BaseActivity {
                 startActivity(new Intent(this, MainActivity.class));
                 return true;
             } else if (id == R.id.nav_community) {
-                // вече сме тук
                 return true;
             } else if (id == R.id.nav_profile) {
                 startActivity(new Intent(this, ProfileActivity.class));
@@ -99,16 +91,11 @@ public class AllUsersActivity extends BaseActivity {
             return false;
         });
 
-        // 7. Първоначално зареждаме всички потребители
         loadUsers("");
     }
 
-    /**
-     * Зарежда списък с потребители (филтрирани по query), без текущия user.
-     */
     private void loadUsers(String query) {
         List<User> users = userDao.searchUsers(query);
-        // махаме текущия
         Iterator<User> it = users.iterator();
         while (it.hasNext()) {
             if (it.next().getId() == currentUserId) {

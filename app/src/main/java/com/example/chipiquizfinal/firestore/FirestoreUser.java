@@ -1,4 +1,4 @@
-package com.example.chipiquizfinal;
+package com.example.chipiquizfinal.firestore;
 
 public class FirestoreUser {
     private String email;

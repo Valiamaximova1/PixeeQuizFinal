@@ -40,7 +40,6 @@ public class ProfileViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_view);
 
-        // --- findViewById ---
         profileImageView  = findViewById(R.id.profileImageView);
         usernameTextView  = findViewById(R.id.usernameTextView);
         emailTextView     = findViewById(R.id.emailTextView);
@@ -50,13 +49,10 @@ public class ProfileViewActivity extends AppCompatActivity {
         btnAddFriend      = findViewById(R.id.btnAddFriend);
         btnChat = findViewById(R.id.btnChat);
 
-
-        // --- DAO & Firestore init ---
         firestore     = FirebaseFirestore.getInstance();
         friendshipDao = MyApplication.getDatabase().friendshipDao();
         userDao       = MyApplication.getDatabase().userDao();
 
-        // Вземаме текущия логнат потребител от Room
         String email = MyApplication.getLoggedEmail();
         if (email == null) {
             Toast.makeText(this, "Нямате активен потребител!", Toast.LENGTH_SHORT).show();
@@ -70,22 +66,17 @@ public class ProfileViewActivity extends AppCompatActivity {
             return;
         }
         currentUserId = current.getId();
-
-        // Прочитаме ID на разглеждания профил от Intent
         viewedUserId = getIntent().getIntExtra("userId", -1);
         if (viewedUserId < 0) {
             Toast.makeText(this, "Няма валиден профил!", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
-
-        // Зареждаме данни от Firestore и конфигурираме бутон
         loadUserProfile();
         setupFriendButton();
     }
 
     private void loadUserProfile() {
-        // Път: users/{viewedUserId}
         firestore.collection("users")
                 .document(String.valueOf(viewedUserId))
                 .get()
@@ -95,7 +86,6 @@ public class ProfileViewActivity extends AppCompatActivity {
                         finish();
                         return;
                     }
-                    // Попълваме UI
                     String username = doc.getString("username");
                     String email    = doc.getString("email");
                     Long points     = doc.getLong("points");
@@ -124,7 +114,6 @@ public class ProfileViewActivity extends AppCompatActivity {
     }
 
     private void setupFriendButton() {
-        // Проверяваме съществуващо приятелство/заявка
         Friendship outgoing = friendshipDao.getFriendship(currentUserId, viewedUserId);
         Friendship incoming = friendshipDao.getFriendship(viewedUserId, currentUserId);
 

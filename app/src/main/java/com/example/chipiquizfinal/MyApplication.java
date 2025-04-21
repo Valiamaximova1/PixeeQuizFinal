@@ -1,6 +1,7 @@
 package com.example.chipiquizfinal;
 
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
 import androidx.room.Room;
@@ -22,43 +23,33 @@ import com.google.gson.Gson;
 public class MyApplication extends Application {
     private static AppDatabase db;
     private static String loggedEmail;
-
+    private static Context appContext;
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // Инициализираме Firebase
+        appContext = getApplicationContext();
         FirebaseApp.initializeApp(this);
         Log.d("APP", ">>> MyApplication.onCreate()");
 
-        // Създаваме/отворяме Room базата
         db = Room.databaseBuilder(getApplicationContext(),
                         AppDatabase.class, "chipiquiz-db")
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build();
 
-        // Форсираме open, за да стартираме миграции и да имаме writable DB от начало
         db.getOpenHelper().getWritableDatabase();
 
-        // Seed-ват въпросите (ако още не са seed-нати)
         seedQuestionsAndAnswers();
-
-        // Добавяме програмените езици (ако липсват)
         preloadLanguages();
-
-        // Seed-ват default потребителите (admin, oli, val)
         seedDefaultUsers();
     }
-
+    public static Context getContext() { return appContext; }
     public static AppDatabase getDatabase() {
         return db;
     }
-
     public static void setLoggedEmail(String email) {
         loggedEmail = email;
     }
-
     public static String getLoggedEmail() {
         return loggedEmail;
     }
@@ -77,7 +68,6 @@ public class MyApplication extends Application {
             }
         }
     }
-
     private void seedQuestionsAndAnswers() {
         Log.d("SEED", ">>> seedQuestionsAndAnswers() start");
         String json = loadJSONFromAsset("questions_with_answers.json");
@@ -153,7 +143,6 @@ public class MyApplication extends Application {
 
         Log.d("SEED", "Seed-ването на въпроси и отговори е завършило успешно");
     }
-
     private String loadJSONFromAsset(String filename) {
         try (InputStream is = getAssets().open(filename)) {
             byte[] buf = new byte[is.available()];
@@ -164,7 +153,6 @@ public class MyApplication extends Application {
             return "";
         }
     }
-
     private void seedDefaultUsers() {
         UserDao userDao = db.userDao();
         UserLanguageChoiceDao choiceDao = db.userLanguageChoiceDao();
@@ -186,7 +174,6 @@ public class MyApplication extends Application {
             insertUserLanguageChoice(choiceDao, langDao, id, "Java", 1, 10);
         }
     }
-
     private long insertUser(UserDao uDao, String email, String pwd,
                             String username, String first, String last,
                             String role, String langName) {
@@ -206,7 +193,6 @@ public class MyApplication extends Application {
         u.setDailyPractice(10);
         return uDao.insert(u);
     }
-
     private void insertUserLanguageChoice(UserLanguageChoiceDao choiceDao,
                                           ProgrammingLanguageDao langDao,
                                           long userId, String langName,
@@ -221,7 +207,6 @@ public class MyApplication extends Application {
         choiceDao.insert(c);
     }
 
-    // Вътрешни seed‑класове за JSON parsing
     private static class QuestionSeed {
         String language; int level, exercise, position;
         String type, textEn, textBg;

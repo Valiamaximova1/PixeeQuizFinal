@@ -19,6 +19,7 @@ import com.example.chipiquizfinal.R;
 import com.example.chipiquizfinal.dao.UserDao;
 import com.example.chipiquizfinal.entity.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
@@ -37,13 +38,12 @@ public class ProfileActivity extends BaseActivity {
     private Button changePasswordBtn, logoutBtn;
     private ImageView qrImageView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 1) Зареждаме layout-а
         setContentView(R.layout.activity_profile);
 
-        // 2) Намираме всички view-та от XML (включително profileImage!)
         profileImage      = findViewById(R.id.profileImage);
         usernameText      = findViewById(R.id.usernameText);
         emailText         = findViewById(R.id.emailText);
@@ -52,10 +52,8 @@ public class ProfileActivity extends BaseActivity {
         logoutBtn         = findViewById(R.id.logoutBtn);
         qrImageView       = findViewById(R.id.qrImageView);
 
-        // 3) Инициализираме общия header (spinner, stats, език)
         setupHeader();
 
-        // 4) Зареждаме потребителя
         userDao     = MyApplication.getDatabase().userDao();
         currentUser = userDao.getUserByEmail(MyApplication.getLoggedEmail());
         if (currentUser == null) {
@@ -64,16 +62,11 @@ public class ProfileActivity extends BaseActivity {
             return;
         }
 
-        // 5) Попълваме текстовете с инфо за потребителя
         displayUserInfo();
 
-        // 6) Генерираме и показваме QR кода
         generateAndDisplayQRCode();
 
-        // 7) Зареждаме профилната снимка
         loadProfileImage();
-
-        // 8) Смяна на парола
         changePasswordBtn.setOnClickListener(v -> {
             String newPass = newPasswordInput.getText().toString().trim();
             if (newPass.isEmpty()) {
@@ -84,9 +77,26 @@ public class ProfileActivity extends BaseActivity {
             userDao.update(currentUser);
             Toast.makeText(this, "Password updated", Toast.LENGTH_SHORT).show();
             newPasswordInput.setText("");
+
+
+            String docId = String.valueOf(currentUser.getId());
+            FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(docId)
+                    .update("password", newPass)
+                    .addOnSuccessListener(aVoid ->
+                            Toast.makeText(this, "Password synced to cloud", Toast.LENGTH_SHORT).show()
+                    )
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "Cloud update failed: " + e.getMessage(), Toast.LENGTH_LONG).show()
+                    );
+
+
         });
 
-        // 9) Навигация
+
+
+
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
         bottomNav.setSelectedItemId(R.id.nav_profile);
         bottomNav.setOnItemSelectedListener(item -> {
@@ -100,15 +110,12 @@ public class ProfileActivity extends BaseActivity {
             return false;
         });
 
-        // Logout
         logoutBtn.setOnClickListener(v -> {
             MyApplication.setLoggedEmail(null);
             startActivity(new Intent(this, WelcomeActivity.class));
             finish();
         });
     }
-
-    /** Зарежда профилната снимка от currentUser.getPhotoUri() или показва placeholder */
     private void loadProfileImage() {
         String path = currentUser.getProfileImagePath();
 
@@ -136,15 +143,13 @@ public class ProfileActivity extends BaseActivity {
 
     private void generateAndDisplayQRCode() {
         try {
-            // Решавайки дали да използваме ID или имейл като съдържание; тук използваме ID
             String uniqueContent = String.valueOf(currentUser.getId());
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            // Генерираме QR код като Bitmap (можеш да промениш размерите според желания)
-            Bitmap qrBitmap = barcodeEncoder.encodeBitmap(uniqueContent, BarcodeFormat.QR_CODE, 300, 300);
+              Bitmap qrBitmap = barcodeEncoder.encodeBitmap(uniqueContent, BarcodeFormat.QR_CODE, 300, 300);
             qrImageView.setImageBitmap(qrBitmap);
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "QR Code generation failed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "QR кодът не може да се генерира", Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -1,6 +1,9 @@
 package com.example.chipiquizfinal.activity;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,14 +15,25 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.chipiquizfinal.MyApplication;
 import com.example.chipiquizfinal.R;
 import com.example.chipiquizfinal.dao.ProgrammingLanguageDao;
+import com.example.chipiquizfinal.dao.UserDao;
+import com.example.chipiquizfinal.dao.UserLanguageChoiceDao;
 import com.example.chipiquizfinal.entity.ProgrammingLanguage;
 import com.example.chipiquizfinal.entity.User;
+import com.example.chipiquizfinal.entity.UserLanguageChoice;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -34,18 +48,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected TextView    livesCount;
     protected ImageButton changeLanguageBtn;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        // setupHeader() да се извика в наследниците след setContentView()
     }
 
-    /**
-     * Инициализира header елементи: spinner за пътека, статистики и бутон за език.
-     * Да се извика след setContentView() във всяко наследено Activity.
-     */
+
     protected void setupHeader() {
         languageSwitcher   = findViewById(R.id.languageSwitcher);
         streakCount        = findViewById(R.id.streakCount);
@@ -95,9 +104,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Обновява lives, points и streak от базата.
-     */
     protected void refreshHeaderStats() {
         User me = MyApplication.getDatabase()
                 .userDao()
@@ -112,16 +118,63 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Обновяваме статистиката при връщане на преден план
         refreshHeaderStats();
     }
 
-    public void loadCurrentUser(String email, Consumer<User> onLoaded, Consumer<String> onError) {
+
+
+
+        private void insertUserAndChoices(
+                User u,
+                Consumer<User> onLoaded,
+                Consumer<String> onError
+        ) {
+            UserDao userDao = MyApplication.getDatabase().userDao();
+            UserLanguageChoiceDao choiceDao = MyApplication.getDatabase().userLanguageChoiceDao();
+            ProgrammingLanguageDao langDao = MyApplication.getDatabase().programmingLanguageDao();
+
+            // Записваме User в локалната база (Room)
+            userDao.insert(u);
+
+            // Зареждаме choices от Firestore и ги записваме в локалната база
+            FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(String.valueOf(u.getId()))
+                    .collection("choices")
+                    .get()
+                    .addOnSuccessListener(qs2 -> {
+                        for (DocumentSnapshot cdoc : qs2.getDocuments()) {
+                            String langName = cdoc.getString("languageName");
+                            ProgrammingLanguage pl = langDao.getByName(langName);
+                            if (pl == null) continue;
+
+                            UserLanguageChoice choice = new UserLanguageChoice();
+                            choice.setUserId(u.getId());
+                            choice.setLanguageId(pl.getId());
+                            choice.setLevel(cdoc.getLong("level").intValue());
+                            choice.setDailyPractice(cdoc.getLong("dailyPractice").intValue());
+                            choiceDao.insert(choice);
+                        }
+                        onLoaded.accept(u);
+                    })
+                    .addOnFailureListener(e -> onError.accept(e.getMessage()));
+        }
+
+
+
+
+
+
+
+    public void loadCurrentUser(Context context, String email, Consumer<User> onLoaded, Consumer<String> onError) {
         User local = MyApplication.getDatabase().userDao().getUserByEmail(email);
+        UserDao userDao = MyApplication.getDatabase().userDao();
+        UserLanguageChoiceDao choiceDao = MyApplication.getDatabase().userLanguageChoiceDao();
+        ProgrammingLanguageDao langDao = MyApplication.getDatabase().programmingLanguageDao();
+
         if (local != null) {
             onLoaded.accept(local);
         } else {
-            // няма го локално, да го дръпнем от Firestore
             FirebaseFirestore.getInstance()
                     .collection("users")
                     .whereEqualTo("email", email)
@@ -129,7 +182,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                     .get()
                     .addOnSuccessListener(qs -> {
                         if (!qs.isEmpty()) {
-                            // в BaseActivity.loadCurrentUser, в onSuccessListener:
                             DocumentSnapshot doc = qs.getDocuments().get(0);
 // …
                             User u = new User();
@@ -144,10 +196,95 @@ public abstract class BaseActivity extends AppCompatActivity {
                             u.setLives(doc.getLong("lives").intValue());
                             u.setConsecutiveDays(doc.getLong("streak").intValue());
                             u.setSelectedLanguageCode(doc.getString("selectedLanguage"));
-                            u.setProfileImagePath(doc.getString("profileImageUrl"));
+//                            u.setProfileImagePath(doc.getString("profileImageUrl"));
 // …
+                            String imageUrl = doc.getString("profileImagePath");
+                            u.setProfileImagePath(imageUrl);
+
+                            insertUserAndChoices(u, onLoaded, onError);
+                            if (imageUrl != null && !imageUrl.isEmpty()) {
+                                Glide.with(MyApplication.getContext())
+                                        .asBitmap()
+                                        .load(imageUrl)
+                                        .circleCrop()
+                                        .into(new CustomTarget<Bitmap>() {
+                                            @Override
+                                            public void onResourceReady(@NonNull Bitmap bitmap, @Nullable Transition<? super Bitmap> t) {
+                                                // 1) Записваме картинката във files/profile_images/<userId>.png
+                                                File dir = new File(context.getFilesDir(), "profile_images");
+                                                if (!dir.exists()) dir.mkdirs();
+                                                File out = new File(dir, u.getId() + ".png");
+                                                try (FileOutputStream fos = new FileOutputStream(out)) {
+                                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                                                    fos.flush();
+                                                    // 2) Обновяваме пътя към локалния файл
+                                                    u.setProfileImagePath(out.getAbsolutePath());
+                                                } catch (IOException e) {
+                                                    e.printStackTrace();
+                                                }
+                                                // 3) Накрая записваме в базата
+                                                MyApplication.getDatabase().userDao().insert(u);
+                                                onLoaded.accept(u);
+                                            }
+                                            @Override public void onLoadCleared(@Nullable Drawable placeholder) { }
+                                        });
+                            } else {
+                                // Няма снимка, просто записваме без local path
+                                MyApplication.getDatabase().userDao().insert(u);
+                                onLoaded.accept(u);
+                            }
+
+
+
                             MyApplication.getDatabase().userDao().insert(u);
+
+                            // ... след като запишете User в локалната база:
+                            userDao.insert(u);
+
+
+                            ProgrammingLanguage pl = langDao.getByName(u.getLanguage());
+                            if (pl != null) {
+                                UserLanguageChoice choice = new UserLanguageChoice();
+                                choice.setUserId(u.getId());
+                                choice.setLanguageId(pl.getId());
+                                // Ако в User имате полета за level и dailyPractice:
+                                choice.setLevel(u.getLevel());               // например 1
+                                choice.setDailyPractice(u.getDailyPractice()); // например 10
+                                choiceDao.insert(choice);
+                            }
+
+// Накрая викаме onLoaded или какъвто е вашия callback:
                             onLoaded.accept(u);
+
+// Сега четем choices под‐колекцията и ги записваме локално:
+//                            FirebaseFirestore.getInstance()
+//                                    .collection("users")
+//                                    .document(String.valueOf(u.getId()))
+//                                    .collection("choices")
+//                                    .get()
+//                                    .addOnSuccessListener(qsChoices -> {
+//                                        for (DocumentSnapshot choiceDoc : qsChoices.getDocuments()) {
+//                                            // Прочитаме името на езика от Firestore
+//                                            String langName = choiceDoc.getString("languageName");
+//                                            // Намираме записания ProgrammingLanguage в Room
+//                                             pl = langDao.getByName(langName);
+//                                            if (pl == null) continue;
+//
+//                                            UserLanguageChoice choice = new UserLanguageChoice();
+//                                            choice.setUserId(u.getId());
+//                                            choice.setLanguageId(pl.getId());
+//                                            choice.setLevel(choiceDoc.getLong("level").intValue());
+//                                            choice.setDailyPractice(choiceDoc.getLong("dailyPractice").intValue());
+//
+//                                            choiceDao.insert(choice);
+//                                        }
+//                                        // След като сме записали всички choices, викаме callback
+//                                        onLoaded.accept(u);
+//                                    })
+//                                    .addOnFailureListener(e -> onError.accept("Failed to load choices: " + e.getMessage()));
+//
+
+
                         } else {
                             onError.accept("User not found in cloud");
                         }
@@ -155,5 +292,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                     .addOnFailureListener(e -> onError.accept(e.getMessage()));
         }
     }
+
+
+
 
 }

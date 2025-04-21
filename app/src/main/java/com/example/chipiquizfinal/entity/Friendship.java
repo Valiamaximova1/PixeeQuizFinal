@@ -36,7 +36,6 @@ public class Friendship {
     @ColumnInfo(name = "status")
     public String status;
 
-    // Constructors
     public Friendship() {}
 
     public Friendship(int userId, int friendId, String status) {

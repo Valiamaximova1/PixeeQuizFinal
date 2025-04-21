@@ -1,8 +1,6 @@
 package com.example.chipiquizfinal.activity;
 
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -13,12 +11,12 @@ import android.view.View;
 import android.widget.*;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.chipiquizfinal.MyApplication;
 import com.example.chipiquizfinal.R;
 import com.example.chipiquizfinal.dao.*;
 import com.example.chipiquizfinal.entity.*;
-import com.example.chipiquizfinal.FirestoreUser;
+import com.example.chipiquizfinal.firestore.FirestoreUser;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -78,7 +76,7 @@ public class MainActivity extends BaseActivity  {
 
         // 2. Вземаме текущия потребител по имейл
         String email = MyApplication.getLoggedEmail();
-        loadCurrentUser(email,
+        loadCurrentUser(this,email,
                 user -> {
                     // onLoaded
                     currentUser = user;

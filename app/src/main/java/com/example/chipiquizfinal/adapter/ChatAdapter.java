@@ -26,7 +26,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
     @NonNull
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Използване на item layout за съобщение
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_message, parent, false);
         return new MessageViewHolder(view);
     }
@@ -57,7 +56,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
             String time = sdf.format(new Date(message.getTimestamp()));
             textViewTimestamp.setText(time);
-            // Пример: Ако е текущ потребител, подравняване отдясно
             if (isCurrentUser) {
                 textViewMessage.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
             } else {

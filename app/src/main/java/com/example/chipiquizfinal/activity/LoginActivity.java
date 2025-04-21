@@ -1,25 +1,21 @@
 package com.example.chipiquizfinal.activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.chipiquizfinal.FirestoreUser;
+import com.example.chipiquizfinal.firestore.FirestoreUser;
 import com.example.chipiquizfinal.MyApplication;
 import com.example.chipiquizfinal.R;
-import com.example.chipiquizfinal.UserHelper;
 import com.example.chipiquizfinal.dao.UserDao;
 import com.example.chipiquizfinal.entity.User;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Locale;
 
@@ -97,7 +93,6 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Търсим документ, където поле "email" == въведения email
         firestore.collection("users")
                 .whereEqualTo("email", email)
                 .limit(1)
@@ -107,15 +102,12 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(this, "Грешка: Потребителят не е намерен.", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    // Взимаме първия документ
                     DocumentSnapshot doc = qs.getDocuments().get(0);
                     String storedPwd = doc.getString("password");
                     if (!pwd.equals(storedPwd)) {
                         Toast.makeText(this, "Грешна парола.", Toast.LENGTH_SHORT).show();
                         return;
                     }
-
-                    // Успешно влизане — взимаме данни за потребителя
                     String username = doc.getString("username");
                     String first    = doc.getString("firstName");
                     String last     = doc.getString("lastName");
@@ -124,15 +116,10 @@ public class LoginActivity extends AppCompatActivity {
                     Long lives      = doc.getLong("lives");
                     Long streak     = doc.getLong("streak");
                     String imgUrl   = doc.getString("profileImageUrl");
-
-                    // Запазваме в SharedPreferences
                     getSharedPreferences("user_prefs", MODE_PRIVATE)
                             .edit()
                             .putString("logged_email", email)
                             .apply();
-
-                    // Можеш да хем да пълниш локалната база, хем да стартираш MainActivity
-                    // Например:
                     MyApplication.setLoggedEmail(email);
 
 //                    FirebaseMessaging.getInstance().getToken()
@@ -165,11 +152,9 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void onFirestoreUserLoaded(DocumentSnapshot snapshot) {
-        // Ако има данни от облака, може да ги синхронизираме локално или в MyApplication
-        if (snapshot.exists()) {
+      if (snapshot.exists()) {
             FirestoreUser fsUser = snapshot.toObject(FirestoreUser.class);
             if (fsUser != null) {
-                // Пример: update точки, животи и streak локално
                 User user = userDao.getUserByEmail(MyApplication.getLoggedEmail());
                 user.setPoints(fsUser.getPoints());
                 user.setLives(fsUser.getLives());

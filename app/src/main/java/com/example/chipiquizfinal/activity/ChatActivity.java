@@ -38,41 +38,31 @@ public class ChatActivity extends AppCompatActivity {
         listViewMessages = findViewById(R.id.listViewMessages);
         messageInput     = findViewById(R.id.messageInput);
         sendButton       = findViewById(R.id.sendButton);
-
-        // Определяме двамата потребители
         UserDao userDao = MyApplication.getDatabase().userDao();
         String myEmail = MyApplication.getLoggedEmail();
         User me = userDao.getUserByEmail(myEmail);
         if (me == null) {
-            Toast.makeText(this, "User not found!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Потребителя не е намерен!", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
         myUserId = me.getId();
         otherUserId = getIntent().getIntExtra("chatWithUserId", -1);
         if (otherUserId < 0) {
-            Toast.makeText(this, "Invalid chat partner!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Несъществуващ приятел", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
-
-        // Създаваме стабилен chatId (по-малкоID_по-голямоID)
         if (myUserId < otherUserId) {
             chatId = myUserId + "_" + otherUserId;
         } else {
             chatId = otherUserId + "_" + myUserId;
         }
-
-        // Настройваме Firebase reference
         database = FirebaseDatabase.getInstance();
         chatRef = database.getReference("chats").child(chatId);
-
-        // Настройваме адаптер за ListView
         adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, messages);
         listViewMessages.setAdapter(adapter);
-
-        // Слушаме нови съобщения
         chatRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot snap, String prevKey) {
@@ -96,8 +86,6 @@ public class ChatActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         });
-
-        // Изпращане на съобщение
         sendButton.setOnClickListener(v -> {
             String txt = messageInput.getText().toString().trim();
             if (TextUtils.isEmpty(txt)) return;

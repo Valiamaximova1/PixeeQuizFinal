@@ -16,9 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.chipiquizfinal.MyApplication;
 import com.example.chipiquizfinal.R;
-import com.example.chipiquizfinal.UserHelper;
+import com.example.chipiquizfinal.helper.UserHelper;
 import com.example.chipiquizfinal.dao.*;
 import com.example.chipiquizfinal.entity.*;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -28,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class RegistrationActivity extends AppCompatActivity {
@@ -54,12 +54,10 @@ public class RegistrationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
-        // DAO
         userDao = MyApplication.getDatabase().userDao();
         languageDao = MyApplication.getDatabase().programmingLanguageDao();
         userLanguageChoiceDao = MyApplication.getDatabase().userLanguageChoiceDao();
 
-        // UI
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
         usernameInput = findViewById(R.id.usernameInput);
@@ -71,8 +69,8 @@ public class RegistrationActivity extends AppCompatActivity {
         createProfileBtn = findViewById(R.id.createProfileBtn);
         profileImageView = findViewById(R.id.profileImageView);
         uploadImageButton = findViewById(R.id.selectImageBtn);
-
         uploadImageButton.setOnClickListener(v -> openImagePicker());
+
 
         // Програмен език
         String[] languages = getResources().getStringArray(R.array.programming_languages_display);
@@ -137,28 +135,20 @@ public class RegistrationActivity extends AppCompatActivity {
         user.setDailyPractice(practiceMinutes);
         user.setSelectedLanguageCode(selectedLangCode);
 
-        // Запази снимката ако има
         if (selectedBitmap != null) {
-            // Създаваме папка във вътрешното хранилище, ако липсва
             File dir = new File(getFilesDir(), "profile_images");
             if (!dir.exists()) dir.mkdirs();
-
-            // Избираме име на файла (например от email)
             String imageFileName = email.replaceAll("[^a-zA-Z0-9]", "") + ".png";
             File file = new File(dir, imageFileName);
             try (FileOutputStream fos = new FileOutputStream(file)) {
-                // Записваме PNG
                 selectedBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
                 fos.flush();
-
-                // В setter-а запазваме **абсолютния** път
                 user.setProfileImagePath(file.getAbsolutePath());
             } catch (IOException e) {
                 e.printStackTrace();
                 Toast.makeText(this, "Грешка при запис на снимката", Toast.LENGTH_SHORT).show();
             }
         }
-
         userDao.insert(user);
         User createdUser = userDao.getUserByEmail(email);
         if (createdUser == null) {
@@ -166,25 +156,26 @@ public class RegistrationActivity extends AppCompatActivity {
             return;
         }
 
-        ProgrammingLanguage lang = languageDao.getByName(baseLang);
-        if (lang != null) {
-            UserLanguageChoice choice = new UserLanguageChoice();
-            choice.setUserId(createdUser.getId());
-            choice.setLanguageId(lang.getId());
-            choice.setLevel(1);
-            choice.setDailyPractice(practiceMinutes);
-            userLanguageChoiceDao.insert(choice);
-        }
-        saveUserToCloud(createdUser);
         FirebaseMessaging.getInstance().getToken()
-                .addOnSuccessListener(UserHelper::updateFcmToken);
+                .addOnSuccessListener(t -> UserHelper.updateFcmToken(email, t));
 
 
-        Toast.makeText(this, "Профилът е създаден!", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this, LoginActivity.class));
+        ProgrammingLanguage lang = languageDao.getByName(baseLang);
+        UserLanguageChoice choice = new UserLanguageChoice();
+        choice.setUserId(createdUser.getId());
+        choice.setLanguageId(lang.getId());
+        choice.setLevel(1);
+        choice.setDailyPractice(practiceMinutes);
+        userLanguageChoiceDao.insert(choice);
+
+
+        saveUserToCloud(createdUser, choice);
+//        Toast.makeText(this, "Профилът е създаден!", Toast.LENGTH_SHORT).show();
+//        startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 
+    //
     private String mapToBaseLanguage(String displayLang) {
         switch (displayLang) {
             case "HTML и CSS": return "HTML & CSS";
@@ -206,11 +197,8 @@ public class RegistrationActivity extends AppCompatActivity {
             Uri uri = data.getData();
             try {
                 Bitmap bitmap = fixImageOrientation(this, uri);
-                // 1️⃣ Запазваме избраното изображение в полето
                 selectedBitmap = bitmap;
                 selectedImageUri = uri;
-
-                // 2️⃣ Показваме го веднага
                 profileImageView.setImageBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -225,14 +213,11 @@ public class RegistrationActivity extends AppCompatActivity {
         options.inJustDecodeBounds = false;
         Bitmap bitmap = BitmapFactory.decodeStream(input, null, options);
         input.close();
-
-        // Четем EXIF
         InputStream exifInput = context.getContentResolver().openInputStream(uri);
         ExifInterface exif = new ExifInterface(exifInput);
         int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                 ExifInterface.ORIENTATION_UNDEFINED);
         exifInput.close();
-
         int rotationDegrees;
         switch (orientation) {
             case ExifInterface.ORIENTATION_ROTATE_90: rotationDegrees = 90; break;
@@ -253,40 +238,135 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
 
-    private void saveUserToCloud(User user) {
-        // 1) Подготвя данните в Map
-        Map<String,Object> data = new HashMap<>();
-        data.put("email", user.getEmail());
-        data.put("username", user.getUsername());
-        data.put("password", user.getPassword());
-        data.put("firstName", user.getFirstName());       // ← ново
-        data.put("lastName", user.getLastName());         // ← ново
-        data.put("language", user.getLanguage());         // ← ново
-        data.put("points", user.getPoints());
-        data.put("lives", user.getLives());
-        data.put("streak", user.getConsecutiveDays());
-        data.put("selectedLanguage", user.getSelectedLanguageCode());
 
-        // ако си записал локалния път към снимката:
-        data.put("profileImagePath",
-                user.getProfileImagePath() != null ? user.getProfileImagePath() : "");
-        // и инициално празен списък за приятели
+    private void saveUserToCloud(User u, UserLanguageChoice c) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String docId = String.valueOf(u.getId());
+        DocumentReference userRef = db.collection("users").document(docId);
+
+        // 1) Подготвяме полетата за основния документ
+        Map<String,Object> data = new HashMap<>();
+        data.put("email", u.getEmail());
+        data.put("password", u.getPassword());
+        data.put("username", u.getUsername());
+        data.put("firstName", u.getFirstName());
+        data.put("lastName", u.getLastName());
+        data.put("language", u.getLanguage());
+        data.put("selectedLanguage", u.getSelectedLanguageCode());
+        data.put("points", u.getPoints());
+        data.put("lives", u.getLives());
+        data.put("streak", u.getConsecutiveDays());
+        data.put("profileImageUrl", u.getProfileImagePath());
         data.put("friends", new ArrayList<String>());
 
-        // 2) Вкарва в колекцията "users", документът е с името на userId
-        String docId = String.valueOf(user.getId());
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("users")
-                .document(docId)
-                .set(data)
+        // 2) Записваме основния документ
+        userRef.set(data)
                 .addOnSuccessListener(aVoid -> {
-                    // записът е мина успешно
-                    Log.d("CloudSave", "Потребителят е записан в облака: " + docId);
+                    // 3) Ако основният запис е успешен – записваме и choice в под‑колекция
+                    Map<String,Object> choiceData = new HashMap<>();
+                    choiceData.put("languageName", u.getLanguage());  // или languageId, ако пазиш числово
+                    choiceData.put("level", c.getLevel());
+                    choiceData.put("dailyPractice", c.getDailyPractice());
+
+                    userRef.collection("choices")
+                            .document("main")
+                            .set(choiceData)
+                            .addOnSuccessListener(a -> {
+                                // всичко е записано в облака
+                                Toast.makeText(this, "Регистрация успешна!", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(this, LoginActivity.class));
+                                finish();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(this,
+                                        "Грешка при запис на езиков избор: " + e.getMessage(),
+                                        Toast.LENGTH_LONG).show();
+                            });
                 })
                 .addOnFailureListener(e -> {
-                    // грешка при запис
-                    Log.e("CloudSave", "Грешка при запис в облака", e);
+                    Toast.makeText(this,
+                            "Грешка при запис в облака: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                    Log.e("CloudSave", "Write failed", e);
                 });
     }
+
+//    private void saveUserToCloud(User user) {
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//
+//        Map<String,Object> data = new HashMap<>();
+//        data.put("email", user.getEmail());
+//        data.put("username", user.getUsername());
+//        data.put("password", user.getPassword());
+//        data.put("firstName", user.getFirstName());
+//        data.put("lastName", user.getLastName());
+//        data.put("language", user.getLanguage());
+//        data.put("points", user.getPoints());
+//        data.put("lives", user.getLives());
+//        data.put("streak", user.getConsecutiveDays());
+//        data.put("selectedLanguage", user.getSelectedLanguageCode());
+//        data.put("profileImagePath",
+//                user.getProfileImagePath() != null ? user.getProfileImagePath() : "");
+//
+//        data.put("friends", new ArrayList<String>());
+//        String docId = String.valueOf(user.getId());
+//        DocumentReference userRef = db.collection("users").document(docId);
+//        userRef.set(data)
+//                .addOnSuccessListener(aVoid -> {
+//                    // 3) След успешен запис – създаваме под‑колекция "choices"
+//                    Map<String,Object> choiceData = new HashMap<>();
+//                    choiceData.put("languageName", user.getLanguage());     // или id, ако предпочиташ
+//                    choiceData.put("level", user.getLevel());
+//                    choiceData.put("dailyPractice", user.getDailyPractice());
+//
+//                    userRef.collection("choices")
+//                            .document("main")  // може да е uid или език
+//                            .set(choiceData)
+//                            .addOnSuccessListener(a -> {
+//                                // всичко в облака е записано
+//                                Toast.makeText(this, "Регистрация успешна!", Toast.LENGTH_SHORT).show();
+//                                startActivity(new Intent(this, LoginActivity.class));
+//                                finish();
+//                            })
+//                            .addOnFailureListener(e -> {
+//                                Toast.makeText(this, "Грешка при запис на choices: "
+//                                        + e.getMessage(), Toast.LENGTH_LONG).show();
+//                            });
+//                    userRef.collection("choices").document("main").set(choiceData);
+//
+//                })
+//                .addOnFailureListener(e -> {
+//                    Toast.makeText(this, "Грешка при запис в облака: "
+//                            + e.getMessage(), Toast.LENGTH_LONG).show();
+//                    Log.e("CloudSave", "Write failed", e);
+//                });
+//
+////        FirebaseFirestore db = FirebaseFirestore.getInstance();
+////        db
+////                .collection("users")
+////                .document(docId)
+////                .set(data)
+////                .addOnSuccessListener(aVoid -> {
+////                    // Only on success navigate away:
+////                    FirebaseMessaging.getInstance()
+////                            .getToken()
+////                            .addOnSuccessListener(token -> UserHelper.updateFcmToken(user.getEmail(), token));
+////
+////
+////
+////
+////
+////
+////                    Toast.makeText(this, "Регистрация успешна!", Toast.LENGTH_SHORT).show();
+////                    startActivity(new Intent(this, LoginActivity.class));
+////                    finish();
+////
+////
+////                })
+////                .addOnFailureListener(e -> {
+////                    Toast.makeText(this, "Грешка при запис в облака: " + e.getMessage(), Toast.LENGTH_LONG).show();
+////                    Log.e("CloudSave", "Write failed", e);
+////                });
+//    }
 
 }
