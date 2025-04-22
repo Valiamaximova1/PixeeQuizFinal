@@ -94,7 +94,6 @@ public class ProfileActivity extends BaseActivity {
 
         });
 
-        // в onCreate(...)
         Button scanQrBtn = findViewById(R.id.scanQrBtn);
         scanQrBtn.setOnClickListener(v -> {
             Intent intent = new Intent(this, QRScannerActivity.class);
@@ -129,8 +128,7 @@ public class ProfileActivity extends BaseActivity {
             File imgFile = new File(path);
             if (imgFile.exists()) {
 
-                // зареждаме локалния файл с Glide
-                Glide.with(this)
+                 Glide.with(this)
                         .load(imgFile)
                         .circleCrop()
                         .placeholder(R.drawable.ic_profile_placeholder)

@@ -44,7 +44,6 @@ public class MainActivity extends BaseActivity  {
 
         db = FirebaseFirestore.getInstance();
 
-        // Само за първоначално зареждане на demo акаунти; може после да го махнете
         seedInitialUsers();
         setupHeader();
 
@@ -69,9 +68,6 @@ public class MainActivity extends BaseActivity  {
         ExerciseDao exerciseDao = MyApplication.getDatabase().exerciseDao();
 
 
-
-
-        // 2. Вземаме текущия потребител по имейл
         String email = MyApplication.getLoggedEmail();
         loadCurrentUser(this,email,
                 user -> {
@@ -126,29 +122,6 @@ public class MainActivity extends BaseActivity  {
                     finish();
                 }
         );
-
-
-
-//        Button buttonOpenChat = findViewById(R.id.buttonOpenChat);
-//        buttonOpenChat.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-////                startActivity(new Intent(this, MapActivity.class));
-//                Intent intent = new Intent(MainActivity.this, MapActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-
-
-
-
-
-
-
-
-
-
     }
 
 
@@ -230,7 +203,7 @@ public class MainActivity extends BaseActivity  {
             } else {
                 lessonIcon.setBackgroundResource(R.drawable.lesson_circle_locked);
                 lessonIcon.setAlpha(0.4f);
-                lessonView.setEnabled(false); // заключено
+                lessonView.setEnabled(false);
             }
 
             LinearLayout layout = (LinearLayout) rowView;
@@ -256,7 +229,7 @@ public class MainActivity extends BaseActivity  {
         builder.setItems(languages, (dialog, which) -> {
             String langCode = (which == 0) ? "bg" : "en";
             setLocale(langCode);
-            recreate(); // презарежда Activity-то
+            recreate();
         });
         builder.show();
     }

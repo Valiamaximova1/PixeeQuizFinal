@@ -136,7 +136,6 @@ public class AddMultipleChoiceQuestionActivity extends AppCompatActivity {
         question.setPosition(lastPos + 1);
         long questionId = questionDao.insert(question);
 
-        // Добавяне на превод
         QuestionTranslation translation = new QuestionTranslation();
         translation.setQuestionId((int) questionId);
         translation.setLanguage("bg");
@@ -151,7 +150,6 @@ public class AddMultipleChoiceQuestionActivity extends AppCompatActivity {
             option.setCorrect(i == correctIndex);
             long optionId = optionDao.insert(option);
 
-            // Превод на отговора
             AnswerOptionTranslation trans = new AnswerOptionTranslation();
             trans.setOptionId((int) optionId);
             trans.setLanguage("bg");

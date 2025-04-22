@@ -26,7 +26,7 @@ public class UserListActivity extends AppCompatActivity {
         userRecyclerView = findViewById(R.id.userRecyclerView);
         userDao = MyApplication.getDatabase().userDao();
 
-        List<User> users = userDao.getAllUsers(); // Методът трябва да го има в UserDao
+        List<User> users = userDao.getAllUsers();
 
         UserListAdapter adapter = new UserListAdapter(users);
         userRecyclerView.setLayoutManager(new LinearLayoutManager(this));

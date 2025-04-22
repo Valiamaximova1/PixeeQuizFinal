@@ -23,10 +23,10 @@ public class Exercise {
     public int languageId;
 
     @ColumnInfo(name = "level")
-    public int level; // 1 до 5
+    public int level;
 
     @ColumnInfo(name = "position")
-    public int position; // позиция на упражнението в нивото (1 до 10)
+    public int position;
 
     @ColumnInfo(name = "is_unlocked")
     public boolean isUnlocked = false;

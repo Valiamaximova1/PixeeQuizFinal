@@ -34,8 +34,8 @@ public class ProfileViewActivity extends BaseActivity {
     private FriendshipDao friendshipDao;
     private UserDao userDao;
 
-    private int currentUserId;   // ID на логнатия потребител
-    private int viewedUserId;    // ID на профила, който разглеждаме
+    private int currentUserId;
+    private int viewedUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,7 +182,6 @@ public class ProfileViewActivity extends BaseActivity {
             });
         }
 
-        // ако вече сте приятели – покажи и чака
         btnChat.setOnClickListener(v -> {
             Intent i = new Intent(this, ChatActivity.class);
             i.putExtra("chatWithUserId", viewedUserId);

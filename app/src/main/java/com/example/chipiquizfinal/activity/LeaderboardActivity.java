@@ -36,7 +36,6 @@ public class LeaderboardActivity extends BaseActivity {
         UserDao userDao = MyApplication.getDatabase().userDao();
         LayoutInflater inflater = LayoutInflater.from(this);
 
-        // Топ 5 поредни дни
         List<User> topStreak = userDao.getTopByStreak(5);
         containerStreak.removeAllViews();
         for (int i = 0; i < topStreak.size(); i++) {

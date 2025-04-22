@@ -14,8 +14,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
-        // 2.1. Запиши го във Firestore под текущия user.document(firestoreId).set({ fcmToken: token }, merge)
-//        FirebaseFirestore.getInstance()
+      //        FirebaseFirestore.getInstance()
 //                .collection("users")
 //                .document(MyApplication.getLoggedUserId())
 //                .update("fcmToken", token);

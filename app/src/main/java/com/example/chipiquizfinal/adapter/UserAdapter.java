@@ -44,10 +44,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.VH> {
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
         User user = items.get(position);
-        Context ctx = holder.itemView.getContext();  // правилният Context
+        Context ctx = holder.itemView.getContext();
 
-        // 1) Зареждаме username и avatar
-        holder.username.setText(user.getUsername());
+         holder.username.setText(user.getUsername());
         String path = user.getProfileImagePath();
         if (path != null && new File(path).exists()) {
             Glide.with(ctx)
@@ -59,19 +58,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.VH> {
             holder.avatar.setImageResource(R.drawable.ic_profile_placeholder);
         }
 
-        // 2) Настройваме View Profile
+
         holder.profView.setVisibility(View.VISIBLE);
         holder.profView.setOnClickListener(v -> {
-            // Създаваме Intent с правилния Context
             Intent intent = new Intent(ctx, ProfileViewActivity.class);
-            // Пращаме userId като int
             intent.putExtra("userId", user.getId());
             ctx.startActivity(intent);
         });
 
 
-        // 3) Логика за friendship бутон (добави/одобри/изчаква/приятели)
-        Friendship fOut = friendshipDao.getFriendship(currentUserId, user.getId());
+         Friendship fOut = friendshipDao.getFriendship(currentUserId, user.getId());
         Friendship fIn  = friendshipDao.getFriendship(user.getId(), currentUserId);
 
         if (fIn != null && "PENDING".equals(fIn.getStatus())) {
@@ -109,8 +105,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.VH> {
             });
         }
     }
-
-
 
     @Override
     public int getItemCount() {

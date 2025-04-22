@@ -59,21 +59,19 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
         lp.gravity = isMine ? Gravity.END : Gravity.START;
         holder.bubbleCard.setLayoutParams(lp);
 
-        // показваме аватар само за другите
         if (isMine) {
             holder.avatar.setVisibility(View.GONE);
             holder.bubbleCard.setCardBackgroundColor(
                     holder.itemView.getContext()
-                            .getColor(R.color.purple_dark)  // твой цвят за мои съобщения
+                            .getColor(R.color.purple_dark)
             );
         } else {
             holder.avatar.setVisibility(View.VISIBLE);
             holder.bubbleCard.setCardBackgroundColor(
                     holder.itemView.getContext()
-                            .getColor(R.color.white)  // мой цвят за чужди
+                            .getColor(R.color.white)
             );
-            // зареждаме снимка, ако имаш път към локалния файл:
-            String path = sender != null ? sender.getProfileImagePath() : null;
+             String path = sender != null ? sender.getProfileImagePath() : null;
             if (path != null && !path.isEmpty()) {
                 Glide.with(holder.itemView.getContext())
                         .load(new File(path))

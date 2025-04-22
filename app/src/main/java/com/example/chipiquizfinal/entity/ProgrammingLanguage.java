@@ -11,7 +11,6 @@ public class ProgrammingLanguage {
 
     private String name;
 
-    // Гетъри и сетъри
 
     public int getId() {
         return id;

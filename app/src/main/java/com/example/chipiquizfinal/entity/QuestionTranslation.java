@@ -23,13 +23,12 @@ public class QuestionTranslation {
     private int questionId;
 
     @ColumnInfo(name = "language")
-    private String language; // "en", "bg"
+    private String language;
 
     @ColumnInfo(name = "text")
     private String text;
 
 
-    // Getters and setters
     public int getId() {
         return id;
     }

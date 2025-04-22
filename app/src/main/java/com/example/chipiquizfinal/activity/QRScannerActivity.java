@@ -76,7 +76,6 @@ public class QRScannerActivity extends AppCompatActivity {
                 Preview preview = new Preview.Builder().build();
                 preview.setSurfaceProvider(previewView.getSurfaceProvider());
 
-                // Настройка на сканиране на QR код
                 BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
                         .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
                         .build();
@@ -151,11 +150,9 @@ public class QRScannerActivity extends AppCompatActivity {
     }
 
     private void onQrScanned(String rawValue) {
-        // rawValue – да речем е email на потребителя
         UserDao userDao = MyApplication.getDatabase().userDao();
         FriendshipDao fDao = MyApplication.getDatabase().friendshipDao();
 
-        // 1) намери сканирания потребител
         User scannedUser = userDao.getUserById(Integer.parseInt(rawValue));
         if (scannedUser == null) {
             Toast.makeText(this, "Потребителят не е намерен в системата", Toast.LENGTH_SHORT).show();
@@ -163,7 +160,6 @@ public class QRScannerActivity extends AppCompatActivity {
             return;
         }
 
-        // 2) вземи текущия потребител
         String meEmail = MyApplication.getLoggedEmail();
         User me = userDao.getUserByEmail(meEmail);
         if (me == null) {
@@ -172,8 +168,7 @@ public class QRScannerActivity extends AppCompatActivity {
             return;
         }
 
-        // 3) добави приятелството (еднопосочно)
-        long res = fDao.addFriend(new Friendship(me.getId(), scannedUser.getId(),  "PENDING"));
+         long res = fDao.addFriend(new Friendship(me.getId(), scannedUser.getId(),  "PENDING"));
         if (res == -1) {
             Toast.makeText(this, "Вече сте приятели или неуспешно добавяне", Toast.LENGTH_SHORT).show();
         } else {

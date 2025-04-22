@@ -30,7 +30,6 @@ public class AdminPanelActivity extends AppCompatActivity {
         });
 
         viewQuestionsBtn.setOnClickListener(v -> {
-            Toast.makeText(this, "TODO: Show all questions", Toast.LENGTH_SHORT).show();
-        });
+            });
     }
 }

@@ -72,6 +72,8 @@ public class RegistrationActivity extends AppCompatActivity {
         uploadImageButton.setOnClickListener(v -> openImagePicker());
 
 
+
+
         // Програмен език
         String[] languages = getResources().getStringArray(R.array.programming_languages_display);
         ArrayAdapter<String> languageAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, languages);

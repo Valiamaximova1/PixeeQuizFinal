@@ -139,11 +139,9 @@ public abstract class BaseActivity extends AppCompatActivity {
             UserLanguageChoiceDao choiceDao = MyApplication.getDatabase().userLanguageChoiceDao();
             ProgrammingLanguageDao langDao = MyApplication.getDatabase().programmingLanguageDao();
 
-            // Записваме User в локалната база (Room)
-            userDao.insert(u);
+             userDao.insert(u);
 
-            // Зареждаме choices от Firestore и ги записваме в локалната база
-            FirebaseFirestore.getInstance()
+             FirebaseFirestore.getInstance()
                     .collection("users")
                     .document(String.valueOf(u.getId()))
                     .collection("choices")
@@ -189,7 +187,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     .addOnSuccessListener(qs -> {
                         if (!qs.isEmpty()) {
                             DocumentSnapshot doc = qs.getDocuments().get(0);
-// …
+
                             User u = new User();
                             u.setId(Integer.parseInt(doc.getId()));
                             u.setEmail(doc.getString("email"));
@@ -202,8 +200,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                             u.setLives(doc.getLong("lives").intValue());
                             u.setConsecutiveDays(doc.getLong("streak").intValue());
                             u.setSelectedLanguageCode(doc.getString("selectedLanguage"));
-//                            u.setProfileImagePath(doc.getString("profileImageUrl"));
-// …
+
                             String imageUrl = doc.getString("profileImagePath");
                             u.setProfileImagePath(imageUrl);
 
@@ -216,27 +213,24 @@ public abstract class BaseActivity extends AppCompatActivity {
                                         .into(new CustomTarget<Bitmap>() {
                                             @Override
                                             public void onResourceReady(@NonNull Bitmap bitmap, @Nullable Transition<? super Bitmap> t) {
-                                                // 1) Записваме картинката във files/profile_images/<userId>.png
                                                 File dir = new File(context.getFilesDir(), "profile_images");
                                                 if (!dir.exists()) dir.mkdirs();
                                                 File out = new File(dir, u.getId() + ".png");
                                                 try (FileOutputStream fos = new FileOutputStream(out)) {
                                                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
                                                     fos.flush();
-                                                    // 2) Обновяваме пътя към локалния файл
-                                                    u.setProfileImagePath(out.getAbsolutePath());
+                                                     u.setProfileImagePath(out.getAbsolutePath());
                                                 } catch (IOException e) {
                                                     e.printStackTrace();
                                                 }
-                                                // 3) Накрая записваме в базата
+
                                                 MyApplication.getDatabase().userDao().insert(u);
                                                 onLoaded.accept(u);
                                             }
                                             @Override public void onLoadCleared(@Nullable Drawable placeholder) { }
                                         });
                             } else {
-                                // Няма снимка, просто записваме без local path
-                                MyApplication.getDatabase().userDao().insert(u);
+                               MyApplication.getDatabase().userDao().insert(u);
                                 onLoaded.accept(u);
                             }
 
@@ -244,8 +238,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                             MyApplication.getDatabase().userDao().insert(u);
 
-                            // ... след като запишете User в локалната база:
-                            userDao.insert(u);
+                             userDao.insert(u);
 
 
                             ProgrammingLanguage pl = langDao.getByName(u.getLanguage());
@@ -253,13 +246,11 @@ public abstract class BaseActivity extends AppCompatActivity {
                                 UserLanguageChoice choice = new UserLanguageChoice();
                                 choice.setUserId(u.getId());
                                 choice.setLanguageId(pl.getId());
-                                // Ако в User имате полета за level и dailyPractice:
-                                choice.setLevel(u.getLevel());               // например 1
-                                choice.setDailyPractice(u.getDailyPractice()); // например 10
+                                choice.setLevel(u.getLevel());
+                                choice.setDailyPractice(u.getDailyPractice());
                                 choiceDao.insert(choice);
                             }
 
-// Накрая викаме onLoaded или какъвто е вашия callback:
                             onLoaded.accept(u);
 
 // Сега четем choices под‐колекцията и ги записваме локално:

@@ -32,7 +32,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        // 1. Вземаме email-а на логнатия потребител
         String email = MyApplication.getLoggedEmail();
         if (email == null) {
             Toast.makeText(this, "Не сте логнат!", Toast.LENGTH_SHORT).show();
@@ -40,8 +39,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             return;
         }
 
-        // 2. През Room намираме User-а и взимаме неговото id
-        User user = MyApplication.getDatabase()
+         User user = MyApplication.getDatabase()
                 .userDao()
                 .getUserByEmail(email);
         if (user == null) {
@@ -51,8 +49,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
         userId = String.valueOf(user.getId());
 
-        // 3. Подготвяме картата
-        fused = LocationServices.getFusedLocationProviderClient(this);
+       fused = LocationServices.getFusedLocationProviderClient(this);
         SupportMapFragment fm = (SupportMapFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         fm.getMapAsync(this);
@@ -62,7 +59,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
 
-        // 1) поискайте permission, ако трябва...
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -70,8 +66,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             return;
         }
 
-        // 2) вземаме последната known локация
-        fused.getLastLocation().addOnSuccessListener(loc -> {
+         fused.getLastLocation().addOnSuccessListener(loc -> {
             if (loc != null) {
                 LatLng myPos = new LatLng(loc.getLatitude(), loc.getLongitude());
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, 12));
@@ -79,14 +74,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         .position(myPos)
                         .title("Ти си тук"));
 
-                // 3) записваме я в Firestore
-                FirebaseFirestore.getInstance()
+                 FirebaseFirestore.getInstance()
                         .collection("users")
                         .document(userId)
                         .update("lastLat", loc.getLatitude(),
                                 "lastLng", loc.getLongitude());
             }
-            // И накрая: зареждаме всички други потребители
             loadAllUserPins();
         });
     }
@@ -108,6 +101,5 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     }
                 });
     }
-    // ...
 }
 

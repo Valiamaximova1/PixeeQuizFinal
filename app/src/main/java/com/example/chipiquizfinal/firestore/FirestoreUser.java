@@ -9,7 +9,6 @@ public class FirestoreUser {
     private int streak;
     private String selectedLanguage;
 
-    // Празен конструктор е нужен на Firestore SDK
     public FirestoreUser() {}
 
     public FirestoreUser(String email, String username,
@@ -25,7 +24,6 @@ public class FirestoreUser {
         this.selectedLanguage = selectedLanguage;
     }
 
-    // getters и setters за всички полета
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 

@@ -21,14 +21,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <!-- Language Selection -->
         <Spinner
             android:id="@+id/languageSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp" />
 
-        <!-- Level and Exercise -->
         <EditText
             android:id="@+id/levelInput"
             android:hint="Level (1-5)"
@@ -41,7 +39,6 @@
             android:inputType="number"
             style="@style/ModernInput" />
 
-        <!-- Question Texts -->
         <EditText
             android:id="@+id/questionInputEn"
             android:layout_width="match_parent"
@@ -59,7 +56,6 @@
             android:layout_marginBottom="24dp"
             android:inputType="textMultiLine"/>
 
-        <!-- Answer 1 -->
         <EditText
             android:id="@+id/answer1En"
             android:layout_width="match_parent"
@@ -74,7 +70,6 @@
             android:hint="Answer 1 (Bulgarian)"
             android:layout_marginBottom="12dp"/>
 
-        <!-- Answer 2 -->
         <EditText
             android:id="@+id/answer2En"
             android:layout_width="match_parent"
@@ -89,7 +84,6 @@
             android:hint="Answer 2 (Bulgarian)"
             android:layout_marginBottom="12dp"/>
 
-        <!-- Answer 3 -->
         <EditText
             android:id="@+id/answer3En"
             android:layout_width="match_parent"
@@ -104,7 +98,6 @@
             android:hint="Answer 3 (Bulgarian)"
             android:layout_marginBottom="12dp"/>
 
-        <!-- Answer 4 -->
         <EditText
             android:id="@+id/answer4En"
             android:layout_width="match_parent"
@@ -119,8 +112,6 @@
             android:hint="Answer 4 (Bulgarian)"
             android:layout_marginBottom="24dp"/>
 
-
-        <!-- Correct Answer Selection -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

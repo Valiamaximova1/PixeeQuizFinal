@@ -36,7 +36,6 @@ public class ExerciseActivity extends BaseActivity {
         setContentView(R.layout.activity_exercise);
         setupHeader();  // ако искаш header тук също
 
-        // 1) Прочитаме exerciseId
         exerciseId = getIntent().getIntExtra("exercise_id", -1);
         if (exerciseId == -1) {
             Toast.makeText(this, "Missing exercise ID", Toast.LENGTH_SHORT).show();
@@ -44,22 +43,18 @@ public class ExerciseActivity extends BaseActivity {
             return;
         }
 
-        // 2) findViewById
         exerciseTitle = findViewById(R.id.exerciseTitle);
         questionText  = findViewById(R.id.questionText);
         answerGroup   = findViewById(R.id.answerGroup);
         nextBtn       = findViewById(R.id.nextBtn);
 
-        // 3) DAO-инстанции
         questionDao      = MyApplication.getDatabase().questionDao();
         optionDao        = MyApplication.getDatabase().questionAnswerOptionDao();
         questionTransDao = MyApplication.getDatabase().questionTranslationDao();
         answerTransDao   = MyApplication.getDatabase().answerOptionTranslationDao();
 
-        // 4) Задаваме заглавие
         exerciseTitle.setText(getString(R.string.exercise_title, exerciseId));
 
-        // 5) Зареждаме въпросите
         questionList = questionDao.getQuestionsByExerciseId(exerciseId);
         if (questionList == null || questionList.isEmpty()) {
             Toast.makeText(this,
@@ -67,17 +62,14 @@ public class ExerciseActivity extends BaseActivity {
             finish();
             return;
         }
-        // Опционално: сортиране и subList
         Collections.sort(questionList,
                 (q1, q2) -> Integer.compare(q1.getPosition(), q2.getPosition()));
         if (questionList.size() > 10) {
             questionList = questionList.subList(0, 10);
         }
 
-        // 6) Показваме първия
         loadQuestion();
 
-        // 7) След бутон
         nextBtn.setOnClickListener(v -> {
             currentQuestionIndex++;
             if (currentQuestionIndex < questionList.size()) {
@@ -94,24 +86,20 @@ public class ExerciseActivity extends BaseActivity {
     private void loadQuestion() {
         Question q = questionList.get(currentQuestionIndex);
 
-        // 1) Прочитаме езиковия код
         String lang = getSharedPreferences("prefs", MODE_PRIVATE)
                 .getString("lang", "bg");
 
-        // 2) Задаваме текста на въпроса (с превод ако има)
         QuestionTranslation qt =
                 questionTransDao.getTranslation(q.getId(), lang);
         questionText.setText(
                 qt != null ? qt.getText() : q.getQuestionText()
         );
 
-        // 3) Опции
         answerGroup.removeAllViews();
         List<QuestionAnswerOption> opts =
                 optionDao.getOptionsForQuestion(q.getId());
         Collections.shuffle(opts);
         for (QuestionAnswerOption opt : opts) {
-            // 3a) Превод на опцията
             AnswerOptionTranslation tr =
                     answerTransDao.getByOptionIdAndLanguage(opt.getId(), lang);
 

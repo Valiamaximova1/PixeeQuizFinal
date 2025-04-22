@@ -133,7 +133,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-                    // Стартираме Home
                     startActivity(new Intent(this, MainActivity.class));
                     finish();
                 })
@@ -145,7 +144,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    // Ако ползваш email като document ID:
     private String emailToDocId(String email) {
         return email.replaceAll("[^a-zA-Z0-9]", "_");
     }
@@ -163,7 +161,6 @@ public class LoginActivity extends AppCompatActivity {
                 userDao.update(user);
             }
         }
-        // След синхронизация — навигиране нататък
         User updatedLocal = userDao.getUserByEmail(MyApplication.getLoggedEmail());
         goToNext(updatedLocal);
     }
@@ -186,7 +183,6 @@ public class LoginActivity extends AppCompatActivity {
         config.setLocale(locale);
         getResources().updateConfiguration(config, getResources().getDisplayMetrics());
 
-        // Записваме избора и в SharedPreferences
         getSharedPreferences("settings", MODE_PRIVATE)
                 .edit()
                 .putString("language", langCode)

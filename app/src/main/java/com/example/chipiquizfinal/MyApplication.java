@@ -98,8 +98,7 @@ public class MyApplication extends Application {
                     .getExerciseByLanguageLevelPosition(lang.getId(), qs.level, qs.exercise);
             if (ex == null) continue;
 
-            // 1) Insert Question
-            Question q = new Question();
+             Question q = new Question();
             q.setLanguageId(lang.getId());
             q.setLevel(qs.level);
             q.setExerciseId(ex.getId());
@@ -108,15 +107,13 @@ public class MyApplication extends Application {
             q.setQuestionType(qs.type);
             long qid = questionDao.insert(q);
 
-            // 2) Превод на въпроса
-            QuestionTranslation qt = new QuestionTranslation();
+             QuestionTranslation qt = new QuestionTranslation();
             qt.setQuestionId((int) qid);
             qt.setLanguage("bg");
             qt.setText(qs.textBg);
             qtDao.insert(qt);
 
-            // 3) Опции и намиране на правилната
-            int correctOptionId = -1;
+              int correctOptionId = -1;
             for (AnswerSeed a : qs.answers) {
                 QuestionAnswerOption opt = new QuestionAnswerOption();
                 opt.setQuestionId((int) qid);
@@ -125,15 +122,13 @@ public class MyApplication extends Application {
                 long oid = optDao.insert(opt);
                 if (a.correct) correctOptionId = (int) oid;
 
-                // превод на опция
-                AnswerOptionTranslation tr = new AnswerOptionTranslation();
+                  AnswerOptionTranslation tr = new AnswerOptionTranslation();
                 tr.setOptionId((int) oid);
                 tr.setLanguage("bg");
                 tr.setText(a.textBg);
                 trDao.insert(tr);
             }
 
-            // 4) Update Question с correctAnswerOptionId
             if (correctOptionId != -1) {
                 q.setId((int) qid);
                 q.setCorrectAnswerOptionId(correctOptionId);

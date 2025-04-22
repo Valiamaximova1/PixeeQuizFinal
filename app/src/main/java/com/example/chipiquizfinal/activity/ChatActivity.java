@@ -63,7 +63,6 @@ import java.util.Map;
         recyclerView.setLayoutManager(
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        // 2) Зареждане на IDs и chatId (както си имаш)
         UserDao userDao = MyApplication.getDatabase().userDao();
         User me = userDao.getUserByEmail(MyApplication.getLoggedEmail());
         myUserId = me.getId();
@@ -72,10 +71,8 @@ import java.util.Map;
                 ? myUserId + "_" + otherUserId
                 : otherUserId + "_" + myUserId;
 
-        // 3) Header с avatar + име
         setupHeader(userDao.getUserById(otherUserId));
 
-        // 4) Firebase Realtime updates
         database = FirebaseDatabase.getInstance();
         chatRef = database.getReference("chats").child(chatId);
         chatRef.addChildEventListener(new ChildEventListener() {
@@ -83,12 +80,12 @@ import java.util.Map;
 
             @Override
             public void onChildRemoved(DataSnapshot snapshot) {
-                // може и празно
+
             }
 
             @Override
             public void onChildMoved(DataSnapshot snapshot, String previousChildName) {
-                // може и празно
+
             }
 
             @Override
@@ -99,7 +96,7 @@ import java.util.Map;
             }
             @Override
             public void onChildChanged(DataSnapshot snapshot, String previousChildName) {
-                // може и празно, ако не ти трябва
+
             }
             @Override
             public void onChildAdded(DataSnapshot snap, String prevKey) {
@@ -124,10 +121,9 @@ import java.util.Map;
                 recyclerView.scrollToPosition(messages.size() - 1);
             }
 
-            /* останалите callback-и остават празни */
+
         });
 
-        // 5) Изпращане на съобщение
         sendButton.setOnClickListener(v -> {
             String txt = messageInput.getText().toString().trim();
             if (txt.isEmpty()) return;
@@ -163,145 +159,3 @@ import java.util.Map;
     }
 }
 
-
-//
-//import android.os.Bundle;
-//import android.text.TextUtils;
-//import android.widget.*;
-//import androidx.appcompat.app.AppCompatActivity;
-//
-//import com.bumptech.glide.Glide;
-//import com.example.chipiquizfinal.MyApplication;
-//import com.example.chipiquizfinal.R;
-//import com.example.chipiquizfinal.dao.UserDao;
-//import com.example.chipiquizfinal.entity.User;
-//import com.google.firebase.database.*;
-//
-//import java.io.File;
-//import java.util.ArrayList;
-//import java.util.HashMap;
-//import java.util.Map;
-//
-//public class ChatActivity extends AppCompatActivity {
-//    private ListView listViewMessages;
-//    private EditText messageInput;
-//    private Button sendButton;
-//
-//    private FirebaseDatabase database;
-//    private DatabaseReference chatRef;
-//
-//    private ArrayList<String> messages = new ArrayList<>();
-//    private ArrayAdapter<String> adapter;
-//
-//
-//    private int myUserId;
-//    private int otherUserId;
-//    private String chatId;
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_chat);
-//
-//        listViewMessages = findViewById(R.id.listViewMessages);
-//        messageInput     = findViewById(R.id.messageInput);
-//        sendButton       = findViewById(R.id.sendButton);
-//        UserDao userDao = MyApplication.getDatabase().userDao();
-//        String myEmail = MyApplication.getLoggedEmail();
-//
-//
-//        User me = userDao.getUserByEmail(myEmail);
-//        if (me == null) {
-//            Toast.makeText(this, "Потребителя не е намерен!", Toast.LENGTH_SHORT).show();
-//            finish();
-//            return;
-//        }
-//        myUserId = me.getId();
-//        otherUserId = getIntent().getIntExtra("chatWithUserId", -1);
-//        if (otherUserId < 0) {
-//            Toast.makeText(this, "Несъществуващ приятел", Toast.LENGTH_SHORT).show();
-//            finish();
-//            return;
-//        }
-//        if (myUserId < otherUserId) {
-//            chatId = myUserId + "_" + otherUserId;
-//        } else {
-//            chatId = otherUserId + "_" + myUserId;
-//        }
-//
-//
-//        // в onCreate() след като вземеш otherUserId:
-//        User other = userDao.getUserById(otherUserId);
-//
-//// findViewById за header картинката и текста
-//        ImageView headerAvatar = findViewById(R.id.chatHeaderAvatar);
-//        TextView headerName    = findViewById(R.id.chatHeaderName);
-//
-//        if (other != null) {
-//            headerName.setText(other.getUsername());
-//            String path = other.getProfileImagePath();
-//            if (path != null && !path.isEmpty()) {
-//                // зареждаме локалната снимка
-//                Glide.with(this)
-//                        .load(new File(path))
-//                        .circleCrop()
-//                        .placeholder(R.drawable.ic_profile_placeholder)
-//                        .into(headerAvatar);
-//            } else {
-//                // fallback, нямаме пътека
-//                headerAvatar.setImageResource(R.drawable.ic_profile_placeholder);
-//            }
-//        } else {
-//            // също fallback
-//            headerName.setText(getString(R.string.unknown_user));
-//            headerAvatar.setImageResource(R.drawable.ic_profile_placeholder);
-//        }
-//
-//
-//
-//
-//        database = FirebaseDatabase.getInstance();
-//        chatRef = database.getReference("chats").child(chatId);
-//        adapter = new ArrayAdapter<>(this,
-//                android.R.layout.simple_list_item_1, messages);
-//        listViewMessages.setAdapter(adapter);
-//
-//        chatRef.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(DataSnapshot snap, String prevKey) {
-//                Map<String,Object> map = (Map<String,Object>) snap.getValue();
-//                if (map == null) return;
-//                Long senderId = (Long) map.get("senderId");
-//                String text  = (String) map.get("text");
-//                String display = (senderId != null && senderId == myUserId)
-//                        ? "Аз: " + text
-//                        : "Той/Тя: " + text;
-//                messages.add(display);
-//                adapter.notifyDataSetChanged();
-//                listViewMessages.smoothScrollToPosition(messages.size() - 1);
-//            }
-//            @Override public void onChildChanged(DataSnapshot ds, String s) {}
-//            @Override public void onChildRemoved(DataSnapshot ds) {}
-//            @Override public void onChildMoved(DataSnapshot ds, String s) {}
-//            @Override public void onCancelled(DatabaseError err) {
-//                Toast.makeText(ChatActivity.this,
-//                        "Chat load failed: " + err.getMessage(),
-//                        Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        sendButton.setOnClickListener(v -> {
-//            String txt = messageInput.getText().toString().trim();
-//            if (TextUtils.isEmpty(txt)) return;
-//            Map<String,Object> msg = new HashMap<>();
-//            msg.put("senderId", myUserId);
-//            msg.put("text", txt);
-//            chatRef.push().setValue(msg)
-//                    .addOnSuccessListener(a -> messageInput.setText(""))
-//                    .addOnFailureListener(e ->
-//                            Toast.makeText(ChatActivity.this,
-//                                    "Send failed: " + e.getMessage(),
-//                                    Toast.LENGTH_SHORT).show()
-//                    );
-//        });
-//    }
-//}

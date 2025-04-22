@@ -31,7 +31,7 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
-        String langCode = prefs.getString("language", "bg"); // default bg
+        String langCode = prefs.getString("language", "bg");
         setLocale(langCode);
 
         ExerciseDao exerciseDao = MyApplication.getDatabase().exerciseDao();
@@ -71,7 +71,6 @@ public class WelcomeActivity extends AppCompatActivity {
         config.setLocale(locale);
         getResources().updateConfiguration(config, getResources().getDisplayMetrics());
 
-        // Записване на езика в SharedPreferences (ако искаш да го помниш)
         SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
         prefs.edit().putString("language", langCode).apply();
     }

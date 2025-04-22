@@ -19,6 +19,7 @@ public class SelectQuestionTypeActivity extends AppCompatActivity {
 
         findViewById(R.id.inputQuestionBtn).setOnClickListener(v -> {
 //            startActivity(new Intent(this, AddInputQuestionActivity.class));
+//
         });
 
         findViewById(R.id.hardwareQuestionBtn).setOnClickListener(v -> {

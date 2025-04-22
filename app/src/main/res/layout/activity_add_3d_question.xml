@@ -18,7 +18,6 @@
             android:textColor="@color/purple_dark"
             android:layout_marginBottom="20dp"/>
 
-        <!-- Level and Exercise -->
         <EditText
             android:id="@+id/levelInput"
             android:hint="Level (1-5)"

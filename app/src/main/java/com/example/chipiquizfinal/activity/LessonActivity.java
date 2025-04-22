@@ -54,10 +54,9 @@ public class LessonActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lesson);
-        setupHeader();  // важно!
+        setupHeader();
 
-        // 1) Инициализация на UI
-        questionTextView = findViewById(R.id.questionText);
+         questionTextView = findViewById(R.id.questionText);
         progressBar      = findViewById(R.id.progressBar);
         answerButtons    = new Button[] {
                 findViewById(R.id.answerButton1),
@@ -73,7 +72,6 @@ public class LessonActivity extends BaseActivity {
             return;
         }
 
-        // 2) DAO-и и потребител
         userDao     = MyApplication.getDatabase().userDao();
         questionDao = MyApplication.getDatabase().questionDao();
         optionDao   = MyApplication.getDatabase().questionAnswerOptionDao();
@@ -117,7 +115,6 @@ public class LessonActivity extends BaseActivity {
         progressBar.setMax(questionList.size());
         progressBar.setIndeterminate(false);
 
-        // 6) Показваме първия въпрос
         displayQuestion();
     }
 
@@ -166,18 +163,16 @@ public class LessonActivity extends BaseActivity {
                         currentQuestionIndex++;
                         displayQuestion();
                     } else {
-                        // Намаляваме живот
+
                         int lives = currentUser.getLives();
                         if (lives > 0) {
                             currentUser.setLives(lives - 1);
-                            // Обновяваме timestamp, за да почне часовникът за дозареждане
                             currentUser.setLastLifeTimestamp(System.currentTimeMillis());
                             userDao.update(currentUser);
                             updateLivesInCloud(currentUser);
                             refreshHeaderStats();
                         }
                         if (currentUser.getLives() == 0) {
-                            // Няма животи – прекъсваме
                             Toast.makeText(this,
                                     "Нямате повече животи – упражнението се прекъсва.",
                                     Toast.LENGTH_LONG).show();
@@ -194,7 +189,6 @@ public class LessonActivity extends BaseActivity {
     }
 
     private void completeExercise() {
-        // 1) Вземаме текущия потребител
         String email = MyApplication.getLoggedEmail();
         UserDao userDao = MyApplication.getDatabase().userDao();
         User user = userDao.getUserByEmail(email);
@@ -203,29 +197,27 @@ public class LessonActivity extends BaseActivity {
             Toast.makeText(this, "Не е намерен потребител или упражнение", Toast.LENGTH_SHORT).show();
             return;
         }
-        // 2) Отбелязваме прогреса за това упражнение
+
+
+
         UserProgress progress = new UserProgress();
         progress.setUserId(user.getId());
         progress.setExerciseId(currentExerciseId);
+        progress.languageId  = ex.getLanguageId();
         progress.setCompletedAt(System.currentTimeMillis());
         progressDao.insert(progress);
-//        MyApplication.getDatabase().userProgressDao().insert(progress);
 
-        // 3) Начисляваме точки
         int pointsToAdd = 10;
         user.setPoints(user.getPoints() + pointsToAdd);
 
-        // 4) Актуализираме streak (примерно прост logic)
         long todayStart = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toEpochSecond();
         if (user.getLastExerciseDate() < todayStart) {
             user.setConsecutiveDays(user.getConsecutiveDays() + 1);
             user.setLastExerciseDate(System.currentTimeMillis());
         }
 
-        // 5) Актуализираме локално
         userDao.update(user);
 
-        // 6) Синхронизиране към Firestore
         FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(String.valueOf(user.getId()))
