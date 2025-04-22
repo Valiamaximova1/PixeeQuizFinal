@@ -46,6 +46,9 @@ public class User {
     @ColumnInfo(name = "last_life_timestamp")
     private long lastLifeTimestamp;
 
+    @ColumnInfo(name = "last_exercise_date")
+    private long lastExerciseDate;
+
     public User() {}
 
     public String getRole() {
@@ -182,5 +185,13 @@ public class User {
 
     public void setLastLifeTimestamp(long lastLifeTimestamp) {
         this.lastLifeTimestamp = lastLifeTimestamp;
+    }
+
+    public long getLastExerciseDate() {
+        return lastExerciseDate;
+    }
+
+    public void setLastExerciseDate(long lastExerciseDate) {
+        this.lastExerciseDate = lastExerciseDate;
     }
 }

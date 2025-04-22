@@ -62,6 +62,7 @@
     <string name="accept">Accept</string>
     <string name="map">Map</string>
     <string name="qr">Scan QR code</string>
+    <string name="unknown_user">"unknown_user "</string>
 
     <!--    &lt;!&ndash; Language Dialog &ndash;&gt;-->
 <!--    <string name="select_language_dialog">Select Language</string>-->

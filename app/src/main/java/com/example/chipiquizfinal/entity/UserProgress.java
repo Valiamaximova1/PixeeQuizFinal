@@ -38,6 +38,8 @@ public class UserProgress {
 
     @ColumnInfo(name = "is_completed")
     public boolean isCompleted;
+    @ColumnInfo(name = "completed_at")
+    private long completedAt;
 
     public UserProgress() {
     }
@@ -87,5 +89,13 @@ public class UserProgress {
 
     public void setCompleted(boolean completed) {
         isCompleted = completed;
+    }
+
+    public long getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(long completedAt) {
+        this.completedAt = completedAt;
     }
 }

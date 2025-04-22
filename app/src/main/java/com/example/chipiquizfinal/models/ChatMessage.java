@@ -1,21 +1,19 @@
 package com.example.chipiquizfinal.models;
 
 public class ChatMessage {
-    private String senderId;
-    private String message;
-    private long timestamp;
+        private String senderId;
+        private String message;
+        private long timestamp;
+        private boolean isMine;
 
-    // Празен конструктор е задължителен за Firebase
-    public ChatMessage() {
-    }
+        public ChatMessage(String senderId, String message, long timestamp, boolean isMine) {
+            this.senderId  = senderId;
+            this.message   = message;
+            this.timestamp = timestamp;
+            this.isMine    = isMine;
+        }
 
-    public ChatMessage(String senderId, String message, long timestamp) {
-        this.senderId = senderId;
-        this.message = message;
-        this.timestamp = timestamp;
-    }
 
-    // Гетъри и сетъри
     public String getSenderId() {
         return senderId;
     }
@@ -38,5 +36,13 @@ public class ChatMessage {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public boolean isMine() {
+        return isMine;
+    }
+
+    public void setMine(boolean mine) {
+        isMine = mine;
     }
 }

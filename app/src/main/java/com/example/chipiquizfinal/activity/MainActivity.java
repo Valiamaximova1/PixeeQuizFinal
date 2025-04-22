@@ -114,6 +114,9 @@ public class MainActivity extends BaseActivity  {
                         else if (id == R.id.nav_map) {
                             startActivity(new Intent(this, MapActivity.class));
                             return true;
+                        }      else if (id == R.id.nav_rewards) {
+                            startActivity(new Intent(this, LeaderboardActivity.class));
+                            return true;
                         }
                         return false;
                     });
@@ -188,7 +191,6 @@ public class MainActivity extends BaseActivity  {
         for (int i = 0; i < exercises.size(); i++) {
             final int index = i;
 
-            // 🔼 Добавяме заглавие за всяко ниво
             if (i % exercisesPerLevel == 0) {
                 TextView levelTitle = new TextView(this);
                 levelTitle.setText("Level " + (i / exercisesPerLevel + 1));
@@ -201,19 +203,6 @@ public class MainActivity extends BaseActivity  {
                 levelTitle.setTypeface(tf);
             }
 
-//            // 🐿️ Добавяме логото само веднъж след 6-тия
-//            if (i == 6 && !logoAdded) {
-//                ImageView logo = new ImageView(this);
-//                logo.setImageResource(R.drawable.pixee);
-//                LinearLayout.LayoutParams logoParams = new LinearLayout.LayoutParams(200, 200);
-//                logoParams.setMargins(0, 40, 0, 40);
-//                logo.setLayoutParams(logoParams);
-//                logo.setScaleType(ImageView.ScaleType.FIT_CENTER);
-//                lessonPathContainer.addView(logo);
-//                logoAdded = true;
-//            }
-
-            // 🎯 Добавяне на самото балонче
             View rowView = getLayoutInflater().inflate(R.layout.item_lesson_row, lessonPathContainer, false);
             ImageView characterIcon = rowView.findViewById(R.id.characterIcon);
             ImageView characterIcon1 = rowView.findViewById(R.id.characterIcon1);
@@ -244,8 +233,6 @@ public class MainActivity extends BaseActivity  {
                 lessonView.setEnabled(false); // заключено
             }
 
-
-            // Редуване: i % 2 -> зигзаг
             LinearLayout layout = (LinearLayout) rowView;
             layout.removeAllViews();
 
@@ -295,17 +282,13 @@ public class MainActivity extends BaseActivity  {
     private void seedInitialUsers() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Примерен placeholder URL за картинка (може и свой в Storage)
         String placeholderUrl = "https://firebasestorage.googleapis.com/v0/b/your‑project.appspot.com/o/default_profile.png?alt=media";
 
-        // Данни за тримата
         List<FirestoreUser> initial = List.of(
                 new FirestoreUser("admin@pixee.com", "Admin", placeholderUrl, 0,5,0,"en"),
                 new FirestoreUser("oli@pixee.com",   "Oli",   placeholderUrl, 0,5,0,"bg"),
                 new FirestoreUser("val@pixee.com",   "Val",   placeholderUrl, 0,5,0,"en")
         );
-
-        // Записваме ги документ по документ
         for (int i = 0; i < initial.size(); i++) {
             String docId = String.valueOf(i+1);
             db.collection("users")

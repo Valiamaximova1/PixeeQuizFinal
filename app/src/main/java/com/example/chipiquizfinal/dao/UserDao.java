@@ -27,6 +27,12 @@ public interface UserDao {
     @Query("SELECT * FROM users WHERE id = :userId LIMIT 1")
     User getUserById(int userId);
 
+    @Query("SELECT * FROM users ORDER BY consecutive_days DESC LIMIT :limit")
+    List<User> getTopByStreak(int limit);
+
+    @Query("SELECT * FROM users ORDER BY points DESC LIMIT :limit")
+    List<User> getTopByPoints(int limit);
+
     @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
     User getUserByEmail(String email);
 

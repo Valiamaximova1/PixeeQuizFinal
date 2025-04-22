@@ -59,6 +59,7 @@
         <activity android:name=".activity.AllUsersActivity" />
         <activity android:name=".activity.ProfileViewActivity" />
         <activity android:name=".activity.QRScannerActivity" />
+        <activity android:name=".activity.LeaderboardActivity" />
         <activity
             android:name=".activity.MapActivity"
             android:label="Карта" />

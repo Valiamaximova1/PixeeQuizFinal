@@ -17,6 +17,8 @@ public interface UserProgressDao {
 
     @Update
     void update(UserProgress progress);
+    @Query("SELECT * FROM user_progress WHERE user_id = :userId")
+    List<UserProgress> getByUser(int userId);
 
     @Query("SELECT * FROM user_progress WHERE user_id = :userId AND exercise_id = :exerciseId LIMIT 1")
     UserProgress getProgress(int userId, int exerciseId);

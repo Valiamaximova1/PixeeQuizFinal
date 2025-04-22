@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- Вмъкваме общия header -->
+    <include
+        android:id="@+id/headerInclude"
+        layout="@layout/header_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!-- Заглавие на екрана -->
+    <TextView
+        android:id="@+id/leaderboardTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Класация"
+        android:fontFamily="@font/underdog"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="@color/purple_dark"
+        android:gravity="center"
+        android:paddingTop="24dp"
+        android:paddingBottom="16dp"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Секция: Най-дълга серия дни -->
+            <TextView
+                android:id="@+id/sectionStreakTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Най-дълга серия дни"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/purple_dark"
+                android:fontFamily="@font/underdog"
+                android:paddingBottom="8dp"/>
+
+            <LinearLayout
+                android:id="@+id/containerStreak"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@drawable/divider_horizontal"
+                android:showDividers="middle"
+                android:paddingBottom="24dp" />
+
+            <!-- Секция: Най-много точки -->
+            <TextView
+                android:id="@+id/sectionPointsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Най-много точки"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/purple_dark"
+                android:fontFamily="@font/underdog"
+                android:paddingBottom="8dp"/>
+
+            <LinearLayout
+                android:id="@+id/containerPoints"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@drawable/divider_horizontal"
+                android:showDividers="middle"
+                android:paddingBottom="24dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Долно навигационно меню (ако го ползвате) -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_top_nav_background"
+        android:elevation="10dp"
+        app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/nav_item_color_selector"
+        app:itemTextColor="@color/nav_item_color_selector"
+        app:labelVisibilityMode="labeled"/>
+</LinearLayout>

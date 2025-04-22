@@ -67,6 +67,7 @@
     <string name="accept">Одобри</string>
     <string name="map">Карта</string>
     <string name="qr">Сканирай QR код</string>
+    <string name="unknown_user">"unknown_user "</string>
 
 
     <!--    &lt;!&ndash; Language Dialog &ndash;&gt;-->

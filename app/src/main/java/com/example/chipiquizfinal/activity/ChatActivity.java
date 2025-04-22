@@ -2,16 +2,17 @@ package com.example.chipiquizfinal.activity;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.chipiquizfinal.MyApplication;
 import com.example.chipiquizfinal.R;
 import com.example.chipiquizfinal.adapter.ChatAdapter;
@@ -21,25 +22,28 @@ import com.example.chipiquizfinal.models.ChatMessage;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChatActivity extends AppCompatActivity {
-    private RecyclerView recyclerChat;
+//
+ public class ChatActivity extends AppCompatActivity {
+    private RecyclerView recyclerView;
     private EditText messageInput;
-    private com.google.android.material.button.MaterialButton sendButton;
+    private Button sendButton;
 
+    private FirebaseDatabase database;
     private DatabaseReference chatRef;
-    private List<ChatMessage> messages = new ArrayList<>();
-    private ChatAdapter chatAdapter;
 
-    private int myUserId;
-    private int otherUserId;
+    private List<ChatMessage> messages = new ArrayList<>();
+    private ChatAdapter adapter;
+
+    private int myUserId, otherUserId;
     private String chatId;
 
     @SuppressLint("WrongViewCast")
@@ -48,117 +52,132 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        recyclerView = findViewById(R.id.recyclerChat);
+        messageInput = findViewById(R.id.messageInput);
+        sendButton   = findViewById(R.id.sendButton);
 
-        // 1) UI
-        recyclerChat   = findViewById(R.id.recyclerChat);
-        messageInput   = findViewById(R.id.messageInput);
-        sendButton = findViewById(R.id.sendButton);
+        UserDao dao = MyApplication.getDatabase().userDao();
+        ChatAdapter adapter = new ChatAdapter(messages, String.valueOf(myUserId), dao);
+        recyclerView.setAdapter(adapter);
 
+        recyclerView.setLayoutManager(
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        // 2) Разтоваряме ListView и го сменяме с RecyclerView
-        recyclerChat.setLayoutManager(new LinearLayoutManager(this));
-        chatAdapter = new ChatAdapter(messages, String.valueOf(getMyUserId()));
-        recyclerChat.setAdapter(chatAdapter);
-
-        // 3) Подготовка на chatId (myId_otherId или обратното)
-        myUserId    = getMyUserId();
+        // 2) Зареждане на IDs и chatId (както си имаш)
+        UserDao userDao = MyApplication.getDatabase().userDao();
+        User me = userDao.getUserByEmail(MyApplication.getLoggedEmail());
+        myUserId = me.getId();
         otherUserId = getIntent().getIntExtra("chatWithUserId", -1);
-        if (otherUserId < 0) {
-            Toast.makeText(this, "Несъществуващ приятел", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
         chatId = myUserId < otherUserId
                 ? myUserId + "_" + otherUserId
                 : otherUserId + "_" + myUserId;
 
-        // 4) Настройваме Firebase RTDB
-        chatRef = FirebaseDatabase.getInstance()
-                .getReference("chats")
-                .child(chatId);
+        // 3) Header с avatar + име
+        setupHeader(userDao.getUserById(otherUserId));
 
+        // 4) Firebase Realtime updates
+        database = FirebaseDatabase.getInstance();
+        chatRef = database.getReference("chats").child(chatId);
         chatRef.addChildEventListener(new ChildEventListener() {
+
+
+            @Override
+            public void onChildRemoved(DataSnapshot snapshot) {
+                // може и празно
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot snapshot, String previousChildName) {
+                // може и празно
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Toast.makeText(ChatActivity.this,
+                        "Chat load failed: " + error.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onChildChanged(DataSnapshot snapshot, String previousChildName) {
+                // може и празно, ако не ти трябва
+            }
             @Override
             public void onChildAdded(DataSnapshot snap, String prevKey) {
+                @SuppressWarnings("unchecked")
                 Map<String,Object> map = (Map<String,Object>) snap.getValue();
                 if (map == null) return;
 
-                // прочитаме полетата
-                long senderIdL = (long) map.get("senderId");
+                Long senderIdL = (Long) map.get("senderId");
                 String text    = (String) map.get("text");
-                long ts        = map.containsKey("timestamp")
-                        ? (long) map.get("timestamp")
-                        : System.currentTimeMillis();
+                Long tsObj     = (Long) map.get("timestamp");
+                long timestamp = tsObj != null ? tsObj : System.currentTimeMillis();
 
-                ChatMessage msg = new ChatMessage();
-                msg.setSenderId(String.valueOf(senderIdL));
-                msg.setMessage(text);
-                msg.setTimestamp(ts);
+                boolean isMine = senderIdL != null && senderIdL == myUserId;
+                ChatMessage cm = new ChatMessage(
+                        String.valueOf(senderIdL),
+                        text,
+                        timestamp,
+                        isMine
+                );
+                messages.add(cm);
+                adapter.notifyItemInserted(messages.size() - 1);
+                recyclerView.scrollToPosition(messages.size() - 1);
+            }
 
-                messages.add(msg);
-                chatAdapter.notifyItemInserted(messages.size() - 1);
-                recyclerChat.scrollToPosition(messages.size() - 1);
-            }
-            @Override public void onChildChanged(DataSnapshot ds, String s) {}
-            @Override public void onChildRemoved(DataSnapshot ds) {}
-            @Override public void onChildMoved(DataSnapshot ds, String s) {}
-            @Override public void onCancelled(DatabaseError err) {
-                Toast.makeText(ChatActivity.this,
-                        "Chat load failed: " + err.getMessage(),
-                        Toast.LENGTH_SHORT).show();
-            }
+            /* останалите callback-и остават празни */
         });
 
-        // 5) Изпращане на съобщения
+        // 5) Изпращане на съобщение
         sendButton.setOnClickListener(v -> {
             String txt = messageInput.getText().toString().trim();
-            if (TextUtils.isEmpty(txt)) return;
-
+            if (txt.isEmpty()) return;
             Map<String,Object> msg = new HashMap<>();
             msg.put("senderId", myUserId);
             msg.put("text", txt);
             msg.put("timestamp", System.currentTimeMillis());
-
             chatRef.push().setValue(msg)
                     .addOnSuccessListener(a -> messageInput.setText(""))
                     .addOnFailureListener(e ->
-                            Toast.makeText(ChatActivity.this,
-                                    "Send failed: " + e.getMessage(),
-                                    Toast.LENGTH_SHORT).show()
-                    );
+                            Toast.makeText(this, "Send failed: "+e.getMessage(),
+                                    Toast.LENGTH_SHORT).show());
+
+
+
         });
+
     }
 
-    private int getMyUserId() {
-        // Вземаме логнатия потребител от Room
-        UserDao userDao = MyApplication.getDatabase().userDao();
-        String email = MyApplication.getLoggedEmail();
-        User me = userDao.getUserByEmail(email);
-        return me != null ? me.getId() : -1;
+    private void setupHeader(User other) {
+        ImageView headerAvatar = findViewById(R.id.chatHeaderAvatar);
+        TextView headerName    = findViewById(R.id.chatHeaderName);
+
+        if (other!=null) {
+            headerName.setText(other.getUsername());
+            String path = other.getProfileImagePath();
+            if (path!=null && !path.isEmpty()) {
+                Glide.with(this).load(new File(path))
+                        .circleCrop()
+                        .into(headerAvatar);
+            }
+        }
     }
 }
 
 
-
-
-
-
-
-
-
-//package com.example.chipiquizfinal.activity;
 //
 //import android.os.Bundle;
 //import android.text.TextUtils;
 //import android.widget.*;
 //import androidx.appcompat.app.AppCompatActivity;
 //
+//import com.bumptech.glide.Glide;
 //import com.example.chipiquizfinal.MyApplication;
 //import com.example.chipiquizfinal.R;
 //import com.example.chipiquizfinal.dao.UserDao;
 //import com.example.chipiquizfinal.entity.User;
 //import com.google.firebase.database.*;
 //
+//import java.io.File;
 //import java.util.ArrayList;
 //import java.util.HashMap;
 //import java.util.Map;
@@ -174,6 +193,7 @@ public class ChatActivity extends AppCompatActivity {
 //    private ArrayList<String> messages = new ArrayList<>();
 //    private ArrayAdapter<String> adapter;
 //
+//
 //    private int myUserId;
 //    private int otherUserId;
 //    private String chatId;
@@ -188,6 +208,8 @@ public class ChatActivity extends AppCompatActivity {
 //        sendButton       = findViewById(R.id.sendButton);
 //        UserDao userDao = MyApplication.getDatabase().userDao();
 //        String myEmail = MyApplication.getLoggedEmail();
+//
+//
 //        User me = userDao.getUserByEmail(myEmail);
 //        if (me == null) {
 //            Toast.makeText(this, "Потребителя не е намерен!", Toast.LENGTH_SHORT).show();
@@ -206,11 +228,44 @@ public class ChatActivity extends AppCompatActivity {
 //        } else {
 //            chatId = otherUserId + "_" + myUserId;
 //        }
+//
+//
+//        // в onCreate() след като вземеш otherUserId:
+//        User other = userDao.getUserById(otherUserId);
+//
+//// findViewById за header картинката и текста
+//        ImageView headerAvatar = findViewById(R.id.chatHeaderAvatar);
+//        TextView headerName    = findViewById(R.id.chatHeaderName);
+//
+//        if (other != null) {
+//            headerName.setText(other.getUsername());
+//            String path = other.getProfileImagePath();
+//            if (path != null && !path.isEmpty()) {
+//                // зареждаме локалната снимка
+//                Glide.with(this)
+//                        .load(new File(path))
+//                        .circleCrop()
+//                        .placeholder(R.drawable.ic_profile_placeholder)
+//                        .into(headerAvatar);
+//            } else {
+//                // fallback, нямаме пътека
+//                headerAvatar.setImageResource(R.drawable.ic_profile_placeholder);
+//            }
+//        } else {
+//            // също fallback
+//            headerName.setText(getString(R.string.unknown_user));
+//            headerAvatar.setImageResource(R.drawable.ic_profile_placeholder);
+//        }
+//
+//
+//
+//
 //        database = FirebaseDatabase.getInstance();
 //        chatRef = database.getReference("chats").child(chatId);
 //        adapter = new ArrayAdapter<>(this,
 //                android.R.layout.simple_list_item_1, messages);
 //        listViewMessages.setAdapter(adapter);
+//
 //        chatRef.addChildEventListener(new ChildEventListener() {
 //            @Override
 //            public void onChildAdded(DataSnapshot snap, String prevKey) {

@@ -22,7 +22,7 @@ import com.example.chipiquizfinal.entity.*;
                 UserProgress.class,
                 Friendship.class
         },
-        version = 11,
+        version = 12,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
